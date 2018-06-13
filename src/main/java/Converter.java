@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ class Converter {
     private int forCounter = 0;
 
     private JSONScenario jsonScenario;
+    private List<String> loopVarList;
 
     private final String STEP_TYPE_FOR = "for";
     private final String STEP_TYPE_COMMAND = "command";
@@ -30,6 +34,57 @@ class Converter {
 
     public Converter(Path oldScenarioPath) throws IOException {
         jsonScenario = new JSONScenario(oldScenarioPath.toFile());
+        loopVarList = new ArrayList<>();
+        extractVariables(jsonScenario.getStepTree());
+        replaceVariables(jsonScenario.getStepTree());
+        System.out.println(loopVarList);
+    }
+
+    private void replaceVariables(Map<String, Object> tree) {
+        for (String key : tree.keySet()) {
+            if (tree.get(key) instanceof String) {
+                for (String loopVar : loopVarList)
+                    tree.replace(key, ((String) tree.get(key)).replaceAll("\\$\\{" + loopVar + "\\}", loopVar));
+            } else replaceVariables(tree.get(key));
+        }
+    }
+
+    private void replaceVariables(List<Object> list) {
+        for (Object item : list) {
+            if (item instanceof Map)
+                replaceVariables((Map<String, Object>) item);
+            if (item instanceof String)
+                for (String loopVar : loopVarList)
+                    item = ((String) item).replaceAll("\\$\\{" + loopVar + "\\}", loopVar);
+        }
+    }
+
+    private void replaceVariables(Object o) {
+        if (o instanceof Map)
+            replaceVariables((Map) o);
+        if (o instanceof List)
+            replaceVariables((List) o);
+    }
+
+    private void extractVariables(Object o) {
+        if (o instanceof Map)
+            extractVariables((Map) o);
+        if (o instanceof List)
+            extractVariables((List) o);
+    }
+
+    private void extractVariables(List<Object> list) {
+        for (Object item : list) {
+            Map<String, Object> tree = (Map<String, Object>) item;
+            extractVariables(tree);
+        }
+    }
+
+    private void extractVariables(Map<String, Object> tree) {
+        if (tree.containsValue(STEP_TYPE_FOR))
+            loopVarList.add((String) tree.get(KEY_VALUE));
+        if (tree.containsKey(KEY_STEPS))
+            extractVariables(tree.get(KEY_STEPS));
     }
 
     public void print() {
@@ -58,7 +113,8 @@ class Converter {
                 case STEP_TYPE_PRECONDITION: {
                     String str = createPrecondStep(tab, (Map<String, Object>) tree.get(KEY_CONFIG));
                     System.out.print("\n" + str + "\n");
-                } break;
+                }
+                break;
                 case STEP_TYPE_FOR: {
 
                     final List inValue = (List) tree.get(KEY_IN);
@@ -83,13 +139,6 @@ class Converter {
         }
     }
 
-    private String createPrecondStep(String tab, Map<String,Object> config) {
-        String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config( { "
-                + config + "});\n";
-        str += tab + "step_" + (stepCounter) + ".start();";
-        return str;
-    }
-
     private void print(final String tab, final ArrayList<Object> steps) {
         for (Object step : steps) {
             if (step instanceof Map) {
@@ -105,6 +154,13 @@ class Converter {
 
     }
 
+    private String createPrecondStep(String tab, Map<String, Object> config) {
+        String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config( { "
+                + mapToJSON(config) + "});\n";
+        str += tab + "step_" + (stepCounter) + ".start();";
+        return str;
+    }
+
     private String createSeqVariable(final String varName, final List seq) {
         return "var " + varName + " = " + seq.toString() + ";";
     }
@@ -118,101 +174,17 @@ class Converter {
 
     public String createStepLoad(String tab, Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = Load.config( { "
-                + config + "});\n";
+                + mapToJSON(config) + "});\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
 
-//    private void loadDefaultConfig() throws IOException {
-//        final String defaultConfigPath = PATH_DEFAULTS;
-//        new File(defaultConfigPath);
-//
-//        final ObjectMapper mapper = new ObjectMapper()
-//                .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
-//                .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
-//        config = mapper.readValue(new File(defaultConfigPath), Config.class);
-//    }
-//
-//    public void print() {
-//        print(jsonScenario.getChildSteps(), "");
-//    }
-//
-//    private void print(List<Step> steps, String tab) {
-//        for (Step step : steps) {
-//            //System.out.print("\n" + tab + step.getClass().getSimpleName().toString());
-//            //System.out.print(" {");
-//            switch (step.getClass().getSimpleName()) {
-//                case STEP_TYPE_FOR: {
-//                    Object fieldValue = getFieldValue("valueSeq", step, ForStep.class);
-//                    String str = createForStep(tab, (List) fieldValue);
-//                    System.out.print("\n\n" + str + "\n");
-//                    Pattern pattern = Pattern.compile("type=[a-z]*");
-//                    Matcher matcher = pattern.matcher(((ForStep) step).stepsTreeList.toString());
-//                    while (matcher.find()) {
-//                        String childsteps = matcher.group(0);
-//                        System.out.println("<" + childsteps.split("=")[1] + ">");
-//                    }
-//                    for(Object o : ((ForStep) step).rawChildSteps) {
-//                        System.out.println(o);
-//                    }
-//
-//                }
-//                break;
-//                case STEP_TYPE_COMMAND: {
-//                    Object fieldValue = getFieldValue("cmdLine", step, CommandStep.class);
-//                    String str = createCommandStep(tab, (String) fieldValue);
-//                    System.out.print("\n\n" + str + "\n");
-//                }
-//                break;
-//                case STEP_TYPE_LOAD: {
-//                    String str = createStepLoad(tab, step);
-//                    System.out.print("\n\n" + str + "\n");
-//                }
-//                break;
-//                case STEP_TYPE_PARALLEL: {
-//                    String str = createParallelStep(tab);
-//                    System.out.print("\n\n" + str + "\n");
-//                }
-//                break;
-//            }
-//
-//            if (step instanceof CompositeStepBase && !(step instanceof ForStep))
-//                print(((CompositeStepBase) step).getChildSteps(), tab + "  ");
-//
-//            if (step instanceof CompositeStepBase && (step instanceof ForStep))
-//                print(((CompositeStepBase) step).getChildSteps(), tab + "  ");
-//
-//            //System.out.print("\n" + tab + "}");
-//        }
-//    }
-//
-
-//
-//    public String varDefineLine(final Object variable) {
-//        if (variable instanceof List) return createSeqVariable((List) variable);
-//        if (variable instanceof String) return createStrVariable((String) variable);
-//        return null;
-//    }
-//
-//    private String createStrVariable(final String fieldValue) {
-//        return "var str_" + (++varCounter) + " = \"" + fieldValue.toString() + "\";";
-//    }
-//
-//    private String createSeqVariable(final List fieldValue) {
-//        return "var seq_" + (++varCounter) + " = " + fieldValue.toString() + ";";
-//    }
-
-//    public String createForStep(String tab, List seq) {
-//        //for(var size = 0; size < itemDataSizes.length; ++size) {
-//
-//        String str = tab + createSeqVariable(seq) + "\n";
-//        str += tab + "for( var i_" + (++forCounter) + " = 0; i_" + forCounter + " < seq_" + varCounter
-//                + ".length; ++i_" + forCounter + "){}";
-//        return str;
-//    }
-//
-//    public String createParallelStep(String tab) {
-//        return tab + "Parallel step {}";
-//    }
-
+    private String mapToJSON(Map map){
+        try {
+            return new ObjectMapper().writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return new String();
+    }
 }
