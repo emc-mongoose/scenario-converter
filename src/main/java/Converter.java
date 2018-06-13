@@ -155,8 +155,8 @@ class Converter {
     }
 
     private String createPrecondStep(String tab, Map<String, Object> config) {
-        String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config( { "
-                + mapToJSON(config) + "});\n";
+        String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config("
+                + mapToJSON(config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
@@ -173,15 +173,15 @@ class Converter {
     }
 
     public String createStepLoad(String tab, Map<String, Object> config) {
-        String str = tab + "var step_" + (++stepCounter) + " = Load.config( { "
-                + mapToJSON(config) + "});\n";
+        String str = tab + "var step_" + (++stepCounter) + " = Load.config("
+                + mapToJSON(config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
 
-    private String mapToJSON(Map map){
+    private String mapToJSON(Map map) {
         try {
-            return new ObjectMapper().writeValueAsString(map);
+            return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
