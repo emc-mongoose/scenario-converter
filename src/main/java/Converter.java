@@ -33,39 +33,41 @@ class Converter {
     }
 
     private void print(final String tab, final Map<String, Object> tree) {
-        for (String key : tree.keySet()) {
-            if (key.equals(KEY_TYPE)) {
-                switch ((String) tree.get(key)) {
-                    case STEP_TYPE_COMMAND: {
-                        String str = createCommandStep(tab, (String) tree.get(KEY_VALUE));
-                        System.out.print("\n" + str + "\n");
-                    }
-                    break;
-                    case STEP_TYPE_SEQ: {
-                        print(tab + " ", (ArrayList<Object>) tree.get(KEY_STEPS));
-                    }
-                    break;
-                    case STEP_TYPE_PARALLEL: {
-                        print(tab + " ", (ArrayList<Object>) tree.get(KEY_STEPS));
-                    }
-                    case STEP_TYPE_FOR: {
-
-                        Object fieldValue = tree.get(KEY_IN);
-                        if (fieldValue != null) {
-                            String str = createForStep(tab, (List) fieldValue);
-                            System.out.print("\n" + str + "\n");
-                        }
-
-                        print(tab + " ", (ArrayList<Object>) tree.get(KEY_STEPS));
-                    }
-                    case STEP_TYPE_LOAD: {
-                        String str = createStepLoad(tab, (Map<String, Object>) tree.get(KEY_CONFIG));
-                        System.out.print("\n" + str + "\n");
-                    }
-                    break;
-                    default:
-                        System.out.println(tab + "<" + tree.get(key) + ">");
+        if (tree.containsKey(KEY_TYPE)) {
+            String key = KEY_TYPE;
+            switch ((String) tree.get(key)) {
+                case STEP_TYPE_COMMAND: {
+                    String str = createCommandStep(tab, (String) tree.get(KEY_VALUE));
+                    System.out.print("\n" + str + "\n");
                 }
+                break;
+                case STEP_TYPE_SEQ: {
+                    print(tab + " ", (ArrayList<Object>) tree.get(KEY_STEPS));
+                }
+                break;
+                case STEP_TYPE_PARALLEL: {
+                    print(tab + " ", (ArrayList<Object>) tree.get(KEY_STEPS));
+                }
+                break;
+                case STEP_TYPE_FOR: {
+
+                    final List inValue = (List) tree.get(KEY_IN);
+                    final String varName = (String) tree.get(KEY_VALUE);
+                    if (inValue != null) {
+                        String str = createForStep(tab, varName, inValue);
+                        System.out.print("\n" + str + "\n");
+                    }
+
+                    print(tab + " ", (ArrayList<Object>) tree.get(KEY_STEPS));
+                }
+                break;
+                case STEP_TYPE_LOAD: {
+                    String str = createStepLoad(tab, (Map<String, Object>) tree.get(KEY_CONFIG));
+                    System.out.print("\n" + str + "\n");
+                }
+                break;
+                default:
+                    System.out.println(tab + "<" + tree.get(key) + ">");
             }
         }
     }
@@ -85,14 +87,14 @@ class Converter {
 
     }
 
-    private String createSeqVariable(final List fieldValue) {
-        return "var seq_" + (++varCounter) + " = " + fieldValue.toString() + ";";
+    private String createSeqVariable(final String varName, final List seq) {
+        return "var " + varName + " = " + seq.toString() + ";";
     }
 
-    public String createForStep(String tab, List seq) {
-        String str = tab + createSeqVariable(seq) + "\n";
-        str += tab + "for( var i_" + (++forCounter) + " = 0; i_" + forCounter + " < seq_" + varCounter
-                + ".length; ++i_" + forCounter + "){}";
+    public String createForStep(final String tab, final String varName, final List seq) {
+        String str = tab + createSeqVariable(varName, seq) + "\n";
+        str += tab + "for( var i_" + (++forCounter) + " = 0; i_" + forCounter + " < " + varName
+                + ".length; ++i_" + forCounter + "){";
         return str;
     }
 
