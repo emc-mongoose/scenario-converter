@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Converter implements IConverter{
+class Converter implements IConverter {
 
     private int stepCounter = 0;
     private int cmdCounter = 0;
@@ -17,7 +17,7 @@ class Converter implements IConverter{
     private Set<String> envVarList;
     private Set<String> allVarList;
 
-    public Converter(Path oldScenarioPath) throws IOException {
+    public Converter(final Path oldScenarioPath) throws IOException {
         jsonScenario = new JSONScenario(oldScenarioPath.toFile());
         loopVarList = new HashSet<>();
         envVarList = new HashSet<>();
@@ -53,7 +53,7 @@ class Converter implements IConverter{
         }
     }
 
-    private void replaceVariables(Object o) {
+    private void replaceVariables(final Object o) {
         if (o instanceof Map)
             replaceVariables((Map) o);
         else if (o instanceof List)
@@ -71,21 +71,21 @@ class Converter implements IConverter{
         }
     }
 
-    private void extractVariables(Object o) {
+    private void extractVariables(final Object o) {
         if (o instanceof Map)
             extractVariables((Map) o);
         else if (o instanceof List)
             extractVariables((List) o);
     }
 
-    private void extractVariables(List<Object> list) {
+    private void extractVariables(final List<Object> list) {
         for (Object item : list) {
             if (item instanceof Map)
                 extractVariables((Map<String, Object>) item);
         }
     }
 
-    private void extractVariables(Map<String, Object> tree) {
+    private void extractVariables(final Map<String, Object> tree) {
         if (tree.containsValue(STEP_TYPE_FOR) & tree.containsKey(KEY_IN))
             loopVarList.add((String) tree.get(KEY_VALUE));
         else {
@@ -160,14 +160,15 @@ class Converter implements IConverter{
         }
     }
 
-    public String createCommandStep(String tab, String cmdLine) {
+    public String createCommandStep(final String tab, final String cmdLine) {
+        String newCmdLine = cmdLine;
         for (String var : loopVarList) {
-            cmdLine = cmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + "_i + \"");
+            newCmdLine = newCmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + "_i + \"");
         }
-        return String.format(COMMAND_FORMAT, tab, ++cmdCounter, tab, "\"" + cmdLine + "\"", tab);
+        return String.format(COMMAND_FORMAT, tab, ++cmdCounter, tab, "\"" + newCmdLine + "\"", tab);
     }
 
-    private String createPrecondStep(String tab, Map<String, Object> config) {
+    private String createPrecondStep(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config("
                 + mapToJSON(config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
@@ -185,14 +186,14 @@ class Converter implements IConverter{
         return str;
     }
 
-    public String createStepLoad(String tab, Map<String, Object> config) {
+    public String createStepLoad(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = Load.config("
                 + mapToJSON(config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
 
-    private String mapToJSON(Map map) {
+    private String mapToJSON(final Map map) {
         try {
             String str = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
             for (String var : allVarList)
