@@ -1,14 +1,13 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Converter {
+class Converter implements IConverter{
 
     private int stepCounter = 0;
     private int cmdCounter = 0;
@@ -18,32 +17,11 @@ class Converter {
     private Set<String> envVarList;
     private Set<String> allVarList;
 
-    private final String STEP_TYPE_FOR = "for";
-    private final String STEP_TYPE_COMMAND = "command";
-    private final String STEP_TYPE_SEQ = "sequential";
-    private final String STEP_TYPE_LOAD = "load";
-    private final String STEP_TYPE_PARALLEL = "parallel";
-    private final String STEP_TYPE_PRECONDITION = "precondition";
-
-    private final String KEY_STEPS = "steps";
-    private final String KEY_TYPE = "type";
-    private final String KEY_CONFIG = "config";
-    private final String KEY_VALUE = "value";
-    private final String KEY_IN = "in";
-
-    private final String VAR_PATTERN = "\\$\\{%s\\}";
-    private final String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
-    private final String QUOTES_PATTERN = "\"%s\"";
-    private final String TAB = "    ";
-    private final String INDEX_POSTFIX = "_i";
-    private final String FOR_FORMAT = "for( var %s = 0; %s < %s.length; ++%s ){";
-    private final String COMMAND_FORMAT = "%s var cmd_%d = new java.lang.ProcessBuilder()\n%s.command(\"sh\", \"-c\", %s)\n%s.start();";
-
     public Converter(Path oldScenarioPath) throws IOException {
         jsonScenario = new JSONScenario(oldScenarioPath.toFile());
         loopVarList = new HashSet<>();
         envVarList = new HashSet<>();
-        envVarList.addAll(System.getenv().keySet());
+        //envVarList.addAll(System.getenv().keySet());
         allVarList = new HashSet<>();
         extractVariables(jsonScenario.getStepTree());
         allVarList.addAll(envVarList);
@@ -59,8 +37,8 @@ class Converter {
             if (key.equals(KEY_TYPE) && tree.get(key).equals(STEP_TYPE_COMMAND))
                 break;
             else if (tree.get(key) instanceof String) {
-                for (String loopVar : allVarList)
-                    tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(VAR_PATTERN, loopVar), loopVar));
+                for (String var : allVarList)
+                    tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(VAR_PATTERN, var), var));
             } else replaceVariables(tree.get(key));
         }
     }
@@ -70,8 +48,8 @@ class Converter {
             if (item instanceof Map)
                 replaceVariables((Map<String, Object>) item);
             else if (item instanceof String)
-                for (String loopVar : allVarList)
-                    item = ((String) item).replaceAll(String.format(VAR_PATTERN, loopVar), loopVar);
+                for (String var : allVarList)
+                    item = ((String) item).replaceAll(String.format(VAR_PATTERN, var), var);
         }
     }
 
@@ -87,8 +65,8 @@ class Converter {
         Matcher matcher = pattern.matcher((String) str);
         while (matcher.find()) {
             String tmp = matcher.group(0).replaceAll("\\{|\\}|\\$", "");
-            //if (allVarList.contains(tmp)) continue;
-            System.out.println("!!!" + tmp);
+            if (loopVarList.contains(tmp)) continue;
+            //System.out.println("!!!" + tmp);
             envVarList.add(tmp);
         }
     }
