@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 
 class JSONScenario {
 
-    private static final Pattern PATTERN_ENV_VAR = Pattern.compile(
-            "\\$\\{([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)\\}"
-    );
+//    private static final Pattern PATTERN_ENV_VAR = Pattern.compile(
+//            "\\$\\{([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)\\}"
+//    );
 
     private Map<String, Object> stepTree;
 
@@ -31,98 +31,94 @@ class JSONScenario {
     }
 
     public JSONScenario(final Map<String, Object> tree) {
-        stepTree = overrideByEnv(validateAgainstSchema(tree));
+        stepTree = tree;
     }
 
     public Map<String, Object> getStepTree() {
         return stepTree;
     }
 
-    private static Map<String, Object> validateAgainstSchema(final Map<String, Object> tree) {
-        return tree;
-    }
-
-    private static Map<String, Object> overrideByEnv(final Map<String, Object> tree) {
-
-        Object value;
-        String valueStr;
-        Matcher m;
-        String propertyName;
-        String newValue;
-        boolean alteredFlag;
-
-        for (final String key : tree.keySet()) {
-            value = tree.get(key);
-            if (value instanceof Map) {
-                overrideByEnv((Map<String, Object>) value);
-            } else if (value instanceof List) {
-                overrideByEnv((List<Object>) value);
-            } else if (value instanceof String) {
-                valueStr = (String) value;
-                m = PATTERN_ENV_VAR.matcher(valueStr);
-                alteredFlag = false;
-                while (m.find()) {
-                    propertyName = m.group(1);
-                    if (propertyName != null && !propertyName.isEmpty()) {
-                        newValue = System.getenv(propertyName);
-                        if (newValue != null) {
-                            valueStr = valueStr.replace("${" + propertyName + "}", newValue);
-                            alteredFlag = true;
-                            Loggers.MSG.info(
-                                    "Key \"{}\": replaced \"{}\" with new value \"{}\"",
-                                    key, propertyName, newValue
-                            );
-                        }
-                    }
-                }
-                if (alteredFlag) {
-                    tree.put(key, valueStr);
-                }
-            }
-        }
-
-        return tree;
-    }
-
-    private static List<Object> overrideByEnv(final List<Object> values) {
-
-        Object value;
-        String valueStr;
-        Matcher m;
-        String propertyName;
-        String newValue;
-        boolean alteredFlag;
-
-        for (int i = 0; i < values.size(); i++) {
-            value = values.get(i);
-            if (value instanceof Map) {
-                overrideByEnv((Map<String, Object>) value);
-            } else if (value instanceof List) {
-                overrideByEnv((List) value);
-            } else if (value instanceof String) {
-                valueStr = (String) value;
-                m = PATTERN_ENV_VAR.matcher(valueStr);
-                alteredFlag = false;
-                while (m.find()) {
-                    propertyName = m.group(1);
-                    if (propertyName != null && !propertyName.isEmpty()) {
-                        newValue = System.getenv(propertyName);
-                        if (newValue != null) {
-                            valueStr = valueStr.replace("${" + propertyName + "}", newValue);
-                            alteredFlag = true;
-                            Loggers.MSG.info(
-                                    "Value #{}: replaced \"{}\" with new value \"{}\"",
-                                    i, propertyName, newValue
-                            );
-                        }
-                    }
-                }
-                if (alteredFlag) {
-                    values.set(i, valueStr);
-                }
-            }
-        }
-        return values;
-    }
+//    private static Map<String, Object> overrideByEnv(final Map<String, Object> tree) {
+//
+//        Object value;
+//        String valueStr;
+//        Matcher m;
+//        String propertyName;
+//        String newValue;
+//        boolean alteredFlag;
+//
+//        for (final String key : tree.keySet()) {
+//            value = tree.get(key);
+//            if (value instanceof Map) {
+//                overrideByEnv((Map<String, Object>) value);
+//            } else if (value instanceof List) {
+//                overrideByEnv((List<Object>) value);
+//            } else if (value instanceof String) {
+//                valueStr = (String) value;
+//                m = PATTERN_ENV_VAR.matcher(valueStr);
+//                alteredFlag = false;
+//                while (m.find()) {
+//                    propertyName = m.group(1);
+//                    if (propertyName != null && !propertyName.isEmpty()) {
+//                        newValue = System.getenv(propertyName);
+//                        if (newValue != null) {
+//                            valueStr = valueStr.replace("${" + propertyName + "}", newValue);
+//                            alteredFlag = true;
+//                            Loggers.MSG.info(
+//                                    "Key \"{}\": replaced \"{}\" with new value \"{}\"",
+//                                    key, propertyName, newValue
+//                            );
+//                        }
+//                    }
+//                }
+//                if (alteredFlag) {
+//                    tree.put(key, valueStr);
+//                }
+//            }
+//        }
+//
+//        return tree;
+//    }
+//
+//    private static List<Object> overrideByEnv(final List<Object> values) {
+//
+//        Object value;
+//        String valueStr;
+//        Matcher m;
+//        String propertyName;
+//        String newValue;
+//        boolean alteredFlag;
+//
+//        for (int i = 0; i < values.size(); i++) {
+//            value = values.get(i);
+//            if (value instanceof Map) {
+//                overrideByEnv((Map<String, Object>) value);
+//            } else if (value instanceof List) {
+//                overrideByEnv((List) value);
+//            } else if (value instanceof String) {
+//                valueStr = (String) value;
+//                m = PATTERN_ENV_VAR.matcher(valueStr);
+//                alteredFlag = false;
+//                while (m.find()) {
+//                    propertyName = m.group(1);
+//                    if (propertyName != null && !propertyName.isEmpty()) {
+//                        newValue = System.getenv(propertyName);
+//                        if (newValue != null) {
+//                            valueStr = valueStr.replace("${" + propertyName + "}", newValue);
+//                            alteredFlag = true;
+//                            Loggers.MSG.info(
+//                                    "Value #{}: replaced \"{}\" with new value \"{}\"",
+//                                    i, propertyName, newValue
+//                            );
+//                        }
+//                    }
+//                }
+//                if (alteredFlag) {
+//                    values.set(i, valueStr);
+//                }
+//            }
+//        }
+//        return values;
+//    }
 
 }
