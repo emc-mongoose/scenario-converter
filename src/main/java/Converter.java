@@ -1,21 +1,22 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class Converter {
 
-    private int varCounter = 0;
     private int stepCounter = 0;
     private int cmdCounter = 0;
-    private int forCounter = 0;
 
     private JSONScenario jsonScenario;
-    private List<String> loopVarList;
+    private Set<String> loopVarList;
+    private Set<String> envVarList;
+    private Set<String> allVarList;
 
     private final String STEP_TYPE_FOR = "for";
     private final String STEP_TYPE_COMMAND = "command";
@@ -30,21 +31,36 @@ class Converter {
     private final String KEY_VALUE = "value";
     private final String KEY_IN = "in";
 
+    private final String VAR_PATTERN = "\\$\\{%s\\}";
+    private final String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
+    private final String QUOTES_PATTERN = "\"%s\"";
     private final String TAB = "    ";
+    private final String INDEX_POSTFIX = "_i";
+    private final String FOR_FORMAT = "for( var %s = 0; %s < %s.length; ++%s ){";
+    private final String COMMAND_FORMAT = "%s var cmd_%d = new java.lang.ProcessBuilder()\n%s.command(\"sh\", \"-c\", %s)\n%s.start();";
 
     public Converter(Path oldScenarioPath) throws IOException {
         jsonScenario = new JSONScenario(oldScenarioPath.toFile());
-        loopVarList = new ArrayList<>();
+        loopVarList = new HashSet<>();
+        envVarList = new HashSet<>();
+        envVarList.addAll(System.getenv().keySet());
+        allVarList = new HashSet<>();
         extractVariables(jsonScenario.getStepTree());
+        allVarList.addAll(envVarList);
+        allVarList.addAll(loopVarList);
         replaceVariables(jsonScenario.getStepTree());
-        System.out.println(loopVarList);
+        System.out.println("loop Var-s : " + loopVarList);
+        System.out.println("env  Var-s : " + envVarList);
+        System.out.println("loop + env : " + allVarList);
     }
 
     private void replaceVariables(Map<String, Object> tree) {
         for (String key : tree.keySet()) {
-            if (tree.get(key) instanceof String) {
-                for (String loopVar : loopVarList)
-                    tree.replace(key, ((String) tree.get(key)).replaceAll("\\$\\{" + loopVar + "\\}", loopVar));
+            if (key.equals(KEY_TYPE) && tree.get(key).equals(STEP_TYPE_COMMAND))
+                break;
+            else if (tree.get(key) instanceof String) {
+                for (String loopVar : allVarList)
+                    tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(VAR_PATTERN, loopVar), loopVar));
             } else replaceVariables(tree.get(key));
         }
     }
@@ -53,38 +69,57 @@ class Converter {
         for (Object item : list) {
             if (item instanceof Map)
                 replaceVariables((Map<String, Object>) item);
-            if (item instanceof String)
-                for (String loopVar : loopVarList)
-                    item = ((String) item).replaceAll("\\$\\{" + loopVar + "\\}", loopVar);
+            else if (item instanceof String)
+                for (String loopVar : allVarList)
+                    item = ((String) item).replaceAll(String.format(VAR_PATTERN, loopVar), loopVar);
         }
     }
 
     private void replaceVariables(Object o) {
         if (o instanceof Map)
             replaceVariables((Map) o);
-        if (o instanceof List)
+        else if (o instanceof List)
             replaceVariables((List) o);
+    }
+
+    private void extractEnvVariables(final String str) {
+        Pattern pattern = Pattern.compile(String.format(VAR_PATTERN, WITHOUT_SPACES_PATTERN));
+        Matcher matcher = pattern.matcher((String) str);
+        while (matcher.find()) {
+            String tmp = matcher.group(0).replaceAll("\\{|\\}|\\$", "");
+            //if (allVarList.contains(tmp)) continue;
+            System.out.println("!!!" + tmp);
+            envVarList.add(tmp);
+        }
     }
 
     private void extractVariables(Object o) {
         if (o instanceof Map)
             extractVariables((Map) o);
-        if (o instanceof List)
+        else if (o instanceof List)
             extractVariables((List) o);
     }
 
     private void extractVariables(List<Object> list) {
         for (Object item : list) {
-            Map<String, Object> tree = (Map<String, Object>) item;
-            extractVariables(tree);
+            if (item instanceof Map)
+                extractVariables((Map<String, Object>) item);
         }
     }
 
     private void extractVariables(Map<String, Object> tree) {
-        if (tree.containsValue(STEP_TYPE_FOR))
+        if (tree.containsValue(STEP_TYPE_FOR) & tree.containsKey(KEY_IN))
             loopVarList.add((String) tree.get(KEY_VALUE));
+        else {
+            for (String key : tree.keySet()) {
+                if (tree.get(key) instanceof String)
+                    extractEnvVariables((String) tree.get(key));
+                extractVariables(tree.get(key));
+            }
+        }
         if (tree.containsKey(KEY_STEPS))
             extractVariables(tree.get(KEY_STEPS));
+
     }
 
     public void print() {
@@ -148,10 +183,10 @@ class Converter {
     }
 
     public String createCommandStep(String tab, String cmdLine) {
-        return tab + "var cmd_" + (++cmdCounter) + " = new java.lang.ProcessBuilder()\n" +
-                tab + ".command(\"sh\", \"-c\", " + cmdLine + ")\n" +
-                tab + ".start();";
-
+        for (String var : loopVarList) {
+            cmdLine = cmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + "_i + \"");
+        }
+        return String.format(COMMAND_FORMAT, tab, ++cmdCounter, tab, "\"" + cmdLine + "\"", tab);
     }
 
     private String createPrecondStep(String tab, Map<String, Object> config) {
@@ -167,8 +202,8 @@ class Converter {
 
     public String createForStep(final String tab, final String varName, final List seq) {
         String str = tab + createSeqVariable(varName, seq) + "\n";
-        str += tab + "for( var i_" + (++forCounter) + " = 0; i_" + forCounter + " < " + varName
-                + ".length; ++i_" + forCounter + "){";
+        String loopVar = varName + INDEX_POSTFIX;
+        str += tab + String.format(FOR_FORMAT, loopVar, loopVar, varName, loopVar);
         return str;
     }
 
@@ -181,7 +216,10 @@ class Converter {
 
     private String mapToJSON(Map map) {
         try {
-            return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+            String str = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+            for (String var : allVarList)
+                str = str.replaceAll(String.format(QUOTES_PATTERN, var), var);
+            return str;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
