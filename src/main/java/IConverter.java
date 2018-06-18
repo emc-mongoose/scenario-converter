@@ -1,22 +1,26 @@
 public interface IConverter {
-    final String STEP_TYPE_FOR = "for";
-    final String STEP_TYPE_COMMAND = "command";
-    final String STEP_TYPE_SEQ = "sequential";
-    final String STEP_TYPE_LOAD = "load";
-    final String STEP_TYPE_PARALLEL = "parallel";
-    final String STEP_TYPE_PRECONDITION = "precondition";
+    String STEP_TYPE_FOR = "for";
+    String STEP_TYPE_COMMAND = "command";
+    String STEP_TYPE_SEQ = "sequential";
+    String STEP_TYPE_LOAD = "load";
+    String STEP_TYPE_PARALLEL = "parallel";
+    String STEP_TYPE_PRECONDITION = "precondition";
 
-    final String KEY_STEPS = "steps";
-    final String KEY_TYPE = "type";
-    final String KEY_CONFIG = "config";
-    final String KEY_VALUE = "value";
-    final String KEY_IN = "in";
+    String KEY_STEPS = "steps";
+    String KEY_STEP = "step";
+    String KEY_TYPE = "type";
+    String KEY_CONFIG = "config";
+    String KEY_LOAD = "load";
+    String KEY_VALUE = "value";
+    String KEY_IN = "in";
+    String KEY_TEST = "test";
+    String KEY_RUN = "run";
 
-    final String VAR_PATTERN = "\\$\\{%s\\}";
-    final String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
-    final String QUOTES_PATTERN = "\"%s\"";
-    final String TAB = "    ";
-    final String INDEX_POSTFIX = "_i";
-    final String FOR_FORMAT = "for( var %s = 0; %s < %s.length; ++%s ){";
-    final String COMMAND_FORMAT = "%s var cmd_%d = new java.lang.ProcessBuilder()\n%s.command(\"sh\", \"-c\", %s)\n%s.start();";
+    String VAR_PATTERN = "\\$\\{%s\\}";
+    String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
+    String QUOTES_PATTERN = "\"%s\"";
+    String TAB = "    ";
+    String INDEX_POSTFIX = "_i";
+    String FOR_FORMAT = "for( var %s = 0; %s < %s.length; ++%s ){";
+    String COMMAND_FORMAT = "%s var cmd_%d = new java.lang.ProcessBuilder()\n%s.command(\"sh\", \"-c\", %s)\n%s.start();";
 }
