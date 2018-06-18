@@ -164,7 +164,7 @@ class Converter implements IConverter {
         }
     }
 
-    public String createCommandStep(final String tab, final String cmdLine) {
+    private String createCommandStep(final String tab, final String cmdLine) {
         String newCmdLine = cmdLine;
         for (String var : loopVarList) {
             newCmdLine = newCmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + " + \"");
@@ -183,13 +183,13 @@ class Converter implements IConverter {
         return "var " + varName + SEQ_POSTFIX + " = " + seq.toString() + ";";
     }
 
-    public String createForStep(final String tab, final String varName, final List seq) {
+    private String createForStep(final String tab, final String varName, final List seq) {
         String str = tab + createSeqVariable(varName, seq) + "\n";
         str += tab + String.format(FORIN_FORMAT, varName, varName + SEQ_POSTFIX);
         return str;
     }
 
-    public String createForStep(final String tab, final String varName, final String range) {
+    private String createForStep(final String tab, final String varName, final String range) {
         final String startVal = range.split("-")[0];
         final String endVal = range.split("-")[1].split(",")[0];
         final String step = range.split("-")[1].split(",")[1];
@@ -209,7 +209,7 @@ class Converter implements IConverter {
         return tab + WHILE_FORMAT;
     }
 
-    public String createStepLoad(final String tab, final Map<String, Object> config) {
+    private String createStepLoad(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = Load.config("
                 + convertConfig(tab, config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
