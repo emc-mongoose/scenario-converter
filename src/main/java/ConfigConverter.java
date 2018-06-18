@@ -17,7 +17,7 @@ public class ConfigConverter implements IConverter {
     public static String convertConfig(final String oldConfig) {
         String str = null;
         try {
-            Map<String, Object> map = new ObjectMapper()
+            final Map<String, Object> map = new ObjectMapper()
                     .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
                     .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
                     .<Map<String, Object>>readValue(
