@@ -6,15 +6,17 @@ public interface IConverter {
     String STEP_TYPE_PARALLEL = "parallel";
     String STEP_TYPE_PRECONDITION = "precondition";
 
-    String KEY_STEPS = "steps";
-    String KEY_STEP = "step";
-    String KEY_TYPE = "type";
     String KEY_CONFIG = "config";
-    String KEY_LOAD = "load";
-    String KEY_VALUE = "value";
     String KEY_IN = "in";
-    String KEY_TEST = "test";
+    String KEY_LIMIT = "limit";
+    String KEY_LOAD = "load";
     String KEY_RUN = "run";
+    String KEY_SCENARIO = "scenario";
+    String KEY_STEP = "step";
+    String KEY_STEPS = "steps";
+    String KEY_TEST = "test";
+    String KEY_TYPE = "type";
+    String KEY_VALUE = "value";
 
     String VAR_PATTERN = "\\$\\{%s\\}";
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";

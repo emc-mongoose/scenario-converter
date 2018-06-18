@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class ConfigConverter implements IConverter {
 
     static private Map<String, Object> tree;
-    static private Map<String, Object> emptyLoadStepTree = new HashMap<String, Object>();
 
     public static String convertConfig(final String oldConfig) {
         String str = null;
@@ -39,34 +39,47 @@ public class ConfigConverter implements IConverter {
 
     private static void convert(Map<String, Object> tree) {
         for (String key : tree.keySet()) {
-            if (key.equals(KEY_TEST)) {
-                convert((Map<String, Object>) tree.get(key));
-                tree.remove(KEY_TEST);
-            } else if (key.equals(KEY_STEP)) {
-                addToLoadSection(tree.get(key));
-                tree.remove(KEY_STEP);
-            } else if (key.equals(KEY_RUN)) {
-                addToRunSection(tree.get(key));
-                tree.remove(KEY_RUN);
+            switch (key) {
+                case KEY_LOAD: {
+                    convert((Map<String, Object>) tree.get(key));
+                }
+                break;
+                case KEY_LIMIT: {
+                    addToLoadSection(tree.get(key));
+                    tree.remove(KEY_LIMIT);
+                }
+                break;
+                case KEY_TEST: {
+                    convert((Map<String, Object>) tree.get(key));
+                    tree.remove(KEY_TEST);
+                }
+                break;
+                case KEY_STEP: {
+                    addToLoadSection(tree.get(key));
+                    tree.remove(KEY_STEP);
+                }
+                break;
+                case KEY_SCENARIO: {
+                    addToRunSection(tree.get(key));
+                    tree.remove(KEY_SCENARIO);
+                }
+                break;
             }
         }
     }
 
     private static void addToRunSection(Object o) {
-        System.out.println("Insert to RunSection : o = [" + o + "]");
+        if (!tree.containsKey(KEY_RUN))
+            tree.put(KEY_RUN, new HashMap<>());
+        ((Map<String, Object>) tree.get(KEY_RUN)).put(KEY_SCENARIO, o);
+        Logger.getLogger(ConfigConverter.class.getName()).info("Insert into RunSection : o = [" + o + "]");
     }
 
     private static void addToLoadSection(Object o) {
-        if (!tree.containsKey(KEY_LOAD)) {
-            emptyLoadStepTree.put(KEY_STEP, o);
-            tree.put(KEY_LOAD, emptyLoadStepTree);
-            System.out.println("Insert ti LoadSection : o = [" + o + "]");
-        } else
-            for (String key : tree.keySet()) {
-                if (key.equals(KEY_LOAD)) {
-                    System.out.println("Insert ti LoadSection : o = [" + o + "]");
-                }
-            }
+        if (!tree.containsKey(KEY_LOAD))
+            tree.put(KEY_LOAD, new HashMap<>());
+        ((Map<String, Object>) tree.get(KEY_LOAD)).put(KEY_STEP, o);
+        Logger.getLogger(ConfigConverter.class.getName()).info("Insert into LoadSection : o = [" + o + "]");
     }
 
 
