@@ -8,6 +8,7 @@ class Converter implements IConverter {
 
     private int stepCounter = 0;
     private int cmdCounter = 0;
+    private int forCounter = 0;
 
     private JsonScenario jsonScenario;
     private Set<String> loopVarList;
@@ -41,13 +42,12 @@ class Converter implements IConverter {
     }
 
     private void replaceVariables(List<Object> list) {
-        for (Object item : list) {
-            if (item instanceof Map)
+        if (list.isEmpty()) return;
+        if (list.get(0) instanceof Map)
+            for (Object item : list)
                 replaceVariables((Map<String, Object>) item);
-            else if (item instanceof String)
-                for (String var : allVarList)
-                    item = ((String) item).replaceAll(String.format(VAR_PATTERN, var), var);
-        }
+        else for (String var : allVarList)
+            Collections.replaceAll(list, String.format(VAR_FORMAT, var), var);
     }
 
     private void replaceVariables(final Object o) {
@@ -126,14 +126,21 @@ class Converter implements IConverter {
                 }
                 break;
                 case STEP_TYPE_FOR: {
+                    String str = null;
+                    if (tree.containsKey(KEY_VALUE)) {
+                        final Object val = tree.get(KEY_VALUE);
+                        if (tree.containsKey(KEY_IN)) {
+                            final Object in = tree.get(KEY_IN);
+                            if (in instanceof List) //by seq
+                                str = createForStep(tab, (String) val, (List) in);
+                            else //by range
+                                str = createForStep(tab, (String) val, (String) in);
+                        } else //by count
+                            str = createForStep(tab, val.toString());
+                    } else //infinite
+                        str = createForStep(tab);
 
-                    final List inValue = (List) tree.get(KEY_IN);
-                    final String varName = (String) tree.get(KEY_VALUE);
-                    if (inValue != null) {
-                        String str = createForStep(tab, varName, inValue);
-                        System.out.print("\n" + str + "\n");
-                    }
-
+                    System.out.print("\n" + str + "\n");
                     print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS));
                     System.out.println(tab + "}");
                 }
@@ -160,38 +167,58 @@ class Converter implements IConverter {
     public String createCommandStep(final String tab, final String cmdLine) {
         String newCmdLine = cmdLine;
         for (String var : loopVarList) {
-            newCmdLine = newCmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + "_i + \"");
+            newCmdLine = newCmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + " + \"");
         }
         return String.format(COMMAND_FORMAT, tab, ++cmdCounter, tab, "\"" + newCmdLine + "\"", tab);
     }
 
     private String createPrecondStep(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config("
-                + convertConfig(config) + ");\n";
+                + convertConfig(tab, config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
 
     private String createSeqVariable(final String varName, final List seq) {
-        return "var " + varName + " = " + seq.toString() + ";";
+        return "var " + varName + SEQ_POSTFIX + " = " + seq.toString() + ";";
     }
 
     public String createForStep(final String tab, final String varName, final List seq) {
         String str = tab + createSeqVariable(varName, seq) + "\n";
-        String loopVar = varName + INDEX_POSTFIX;
-        str += tab + String.format(FOR_FORMAT, loopVar, loopVar, varName, loopVar);
+        str += tab + String.format(FORIN_FORMAT, varName, varName + SEQ_POSTFIX);
         return str;
+    }
+
+    public String createForStep(final String tab, final String varName, final String range) {
+        final String startVal = range.split("-")[0];
+        final String endVal = range.split("-")[1].split(",")[0];
+        final String step = range.split("-")[1].split(",")[1];
+        return tab + createForLine(varName, startVal, endVal, step);
+    }
+
+    private String createForStep(final String tab, final String val) {
+        final String loopVar = "i" + (++forCounter);
+        return tab + createForLine(loopVar, "0", val, "1");
+    }
+
+    private String createForLine(final String varName, final String startValue, final String endValue, final String step) {
+        return String.format(FOR_FORMAT, varName, startValue, varName, endValue, varName, step);
+    }
+
+    private String createForStep(String tab) {
+        return tab + WHILE_FORMAT;
     }
 
     public String createStepLoad(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = Load.config("
-                + convertConfig(config) + ");\n";
+                + convertConfig(tab, config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
 
-    private String convertConfig(final Map map) {
+    private String convertConfig(final String tab, final Map map) {
         String str = ConfigConverter.convertConfigAndToJson(map);
+        str = str.replaceAll("\\n", "\n" + tab);
         for (String var : allVarList)
             str = str.replaceAll(String.format(QUOTES_PATTERN, var), var);
         return str;

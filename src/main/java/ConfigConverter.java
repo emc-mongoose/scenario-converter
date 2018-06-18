@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class ConfigConverter implements IConverter {
 
@@ -72,14 +71,12 @@ public class ConfigConverter implements IConverter {
         if (!tree.containsKey(KEY_RUN))
             tree.put(KEY_RUN, new HashMap<>());
         ((Map<String, Object>) tree.get(KEY_RUN)).put(KEY_SCENARIO, o);
-        Logger.getLogger(ConfigConverter.class.getName()).info("Insert into RunSection : o = [" + o + "]");
     }
 
     private static void addToLoadSection(Object o) {
         if (!tree.containsKey(KEY_LOAD))
             tree.put(KEY_LOAD, new HashMap<>());
         ((Map<String, Object>) tree.get(KEY_LOAD)).put(KEY_STEP, o);
-        Logger.getLogger(ConfigConverter.class.getName()).info("Insert into LoadSection : o = [" + o + "]");
     }
 
 

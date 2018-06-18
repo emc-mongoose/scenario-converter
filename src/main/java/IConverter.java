@@ -22,7 +22,10 @@ public interface IConverter {
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
     String QUOTES_PATTERN = "\"%s\"";
     String TAB = "    ";
-    String INDEX_POSTFIX = "_i";
-    String FOR_FORMAT = "for( var %s = 0; %s < %s.length; ++%s ){";
+    String SEQ_POSTFIX = "_seq";
+    String VAR_FORMAT = "${%s}";
+    String FOR_FORMAT = "for( var %s = %s; %s < %s; %s += %s ){";
+    String FORIN_FORMAT = "for( %s in %s ){";
+    String WHILE_FORMAT = "while( true ){";
     String COMMAND_FORMAT = "%s var cmd_%d = new java.lang.ProcessBuilder()\n%s.command(\"sh\", \"-c\", %s)\n%s.start();";
 }
