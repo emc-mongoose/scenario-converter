@@ -1,6 +1,3 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -12,13 +9,13 @@ class Converter implements IConverter {
     private int stepCounter = 0;
     private int cmdCounter = 0;
 
-    private JSONScenario jsonScenario;
+    private JsonScenario jsonScenario;
     private Set<String> loopVarList;
     private Set<String> envVarList;
     private Set<String> allVarList;
 
     public Converter(final Path oldScenarioPath) throws IOException {
-        jsonScenario = new JSONScenario(oldScenarioPath.toFile());
+        jsonScenario = new JsonScenario(oldScenarioPath.toFile());
         loopVarList = new HashSet<>();
         envVarList = new HashSet<>();
         //envVarList.addAll(System.getenv().keySet());
@@ -170,7 +167,7 @@ class Converter implements IConverter {
 
     private String createPrecondStep(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = PreconditionLoad.config("
-                + mapToJSON(config) + ");\n";
+                + convertConfig(config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
@@ -188,20 +185,15 @@ class Converter implements IConverter {
 
     public String createStepLoad(final String tab, final Map<String, Object> config) {
         String str = tab + "var step_" + (++stepCounter) + " = Load.config("
-                + mapToJSON(config) + ");\n";
+                + convertConfig(config) + ");\n";
         str += tab + "step_" + (stepCounter) + ".start();";
         return str;
     }
 
-    private String mapToJSON(final Map map) {
-        try {
-            String str = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
-            for (String var : allVarList)
-                str = str.replaceAll(String.format(QUOTES_PATTERN, var), var);
-            return str;
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return new String();
+    private String convertConfig(final Map map) {
+        String str = ConfigConverter.convertConfigAndToJson(map);
+        for (String var : allVarList)
+            str = str.replaceAll(String.format(QUOTES_PATTERN, var), var);
+        return str;
     }
 }

@@ -1,16 +1,13 @@
-import com.emc.mongoose.ui.log.Loggers;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-class JSONScenario {
+class JsonScenario {
 
 //    private static final Pattern PATTERN_ENV_VAR = Pattern.compile(
 //            "\\$\\{([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)\\}"
@@ -18,7 +15,7 @@ class JSONScenario {
 
     private Map<String, Object> stepTree;
 
-    public JSONScenario(final File scenarioSrcFile) throws IOException {
+    public JsonScenario(final File scenarioSrcFile) throws IOException {
         this(
                 new ObjectMapper()
                         .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
@@ -30,7 +27,7 @@ class JSONScenario {
         );
     }
 
-    public JSONScenario(final Map<String, Object> tree) {
+    public JsonScenario(final Map<String, Object> tree) {
         stepTree = tree;
     }
 
