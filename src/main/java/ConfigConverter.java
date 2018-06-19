@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConfigConverter implements Converter {
+public class ConfigConverter implements Constants {
 
     public static String convertConfig(final String oldConfig) {
         String str = null;
@@ -64,14 +64,16 @@ public class ConfigConverter implements Converter {
     }
 
     private static void addToRunSection(final Object o, final Map<String, Object> newTree) {
-        if (!newTree.containsKey(KEY_RUN))
+        if (!newTree.containsKey(KEY_RUN)) {
             newTree.put(KEY_RUN, new HashMap<>());
+        }
         ((Map<String, Object>) newTree.get(KEY_RUN)).put(KEY_SCENARIO, o);
     }
 
     private static void addToLoadSection(final Object o, final Map<String, Object> newTree) {
-        if (!newTree.containsKey(KEY_LOAD))
+        if (!newTree.containsKey(KEY_LOAD)) {
             newTree.put(KEY_LOAD, new HashMap<>());
+        }
         ((Map<String, Object>) newTree.get(KEY_LOAD)).put(KEY_STEP, o);
     }
 
