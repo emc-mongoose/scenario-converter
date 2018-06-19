@@ -2,6 +2,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.akurilov.commons.collection.TreeUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class ConfigConverter implements Constants {
     }
 
     public static Map<String, Object> convertConfig(final Map<String, Object> oldConfig) {
-        final Map<String, Object> newConfig = oldConfig;
+        final Map<String, Object> newConfig = TreeUtil.copyTree(oldConfig);
         convert(oldConfig, newConfig);
         return newConfig;
     }
