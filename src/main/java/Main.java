@@ -15,7 +15,7 @@ public class Main {
             scenarioPath = Paths.get(getBaseDir(), args[0]);
         }
         Path scenarioPath = Paths.get(DIR_EXAMPLE_SCENARIO, "json", "test.json");
-        Converter converter = new Converter(scenarioPath);
+        ConverterImpl converter = new ConverterImpl(scenarioPath);
         converter.print();
     }
 
