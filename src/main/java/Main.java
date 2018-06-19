@@ -10,12 +10,10 @@ public class Main {
     private static Path scenarioPath;
 
     public static void main(String[] args) throws IOException {
-
-        if (args.length != 0) {
-            scenarioPath = Paths.get(getBaseDir(), args[0]);
-        }
-        Path scenarioPath = Paths.get(DIR_EXAMPLE_SCENARIO, "json", "test.json");
-        ConverterImpl converter = new ConverterImpl(scenarioPath);
+        scenarioPath = (args.length != 0)
+                ? Paths.get(getBaseDir(), args[0])
+                : Paths.get(DIR_EXAMPLE_SCENARIO, "json", "test.json");
+        final ConverterImpl converter = new ConverterImpl(scenarioPath);
         converter.print();
     }
 
