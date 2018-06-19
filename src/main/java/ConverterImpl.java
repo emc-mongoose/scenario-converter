@@ -9,6 +9,7 @@ class ConverterImpl implements Converter {
     private int stepCounter = 0;
     private int cmdCounter = 0;
     private int forCounter = 0;
+    private int parallelCounter = 0;
 
     final private JsonScenario jsonScenario;
     final private Set<String> loopVarList;
@@ -97,10 +98,10 @@ class ConverterImpl implements Converter {
     }
 
     public void print() {
-        print("", jsonScenario.getStepTree());
+        print("", jsonScenario.getStepTree(), false);
     }
 
-    private void print(final String tab, final Map<String, Object> tree) {
+    private void print(final String tab, final Map<String, Object> tree, final boolean parallel) {
         if (tree.containsKey(KEY_TYPE)) {
             String key = KEY_TYPE;
             switch ((String) tree.get(key)) {
@@ -110,13 +111,15 @@ class ConverterImpl implements Converter {
                 }
                 break;
                 case STEP_TYPE_SEQ: {
-                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS));
+                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false);
                 }
                 break;
                 case STEP_TYPE_PARALLEL: {
-                    System.out.println("\n<PARALLEL> : {");
-                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS));
-                    System.out.println(tab + "}");
+                    //System.out.println("\n<PARALLEL> : ");
+                    final int stepsCount = ((ArrayList<Object>) tree.get(KEY_STEPS)).size();
+                    print(tab, (ArrayList<Object>) tree.get(KEY_STEPS), true);
+                    final String str = createParallelSteps(tab, stepsCount);
+                    System.out.print("\n" + str + "\n");
                 }
                 break;
                 case STEP_TYPE_PRECONDITION: {
@@ -140,8 +143,8 @@ class ConverterImpl implements Converter {
                         str = createForStep(tab);
 
                     System.out.print("\n" + str + "\n");
-                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS));
-                    System.out.println(tab + "}");
+                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false);
+                    System.out.println(tab + "};");
                 }
                 break;
                 case STEP_TYPE_LOAD: {
@@ -155,10 +158,12 @@ class ConverterImpl implements Converter {
         }
     }
 
-    private void print(final String tab, final ArrayList<Object> steps) {
+    private void print(final String tab, final ArrayList<Object> steps, final boolean parallel) {
         for (Object step : steps) {
             if (step instanceof Map) {
-                print(tab + " ", (Map<String, Object>) step);
+                if (parallel) System.out.println("\n" + tab + "function func" + (++parallelCounter) + "() {");
+                print(tab + TAB, (Map<String, Object>) step, parallel);
+                if (parallel) System.out.println(tab + "};");
             }
         }
     }
@@ -169,6 +174,13 @@ class ConverterImpl implements Converter {
             newCmdLine = newCmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + " + \"");
         }
         return String.format(COMMAND_FORMAT, tab, ++cmdCounter, tab, "\"" + newCmdLine + "\"", tab);
+    }
+
+    private String createParallelSteps(final String tab, final int stepCount) {
+        String str = tab + THREAD_TYPE_FORMAT;
+        for (int s = 1; s <= stepCount; ++s) str += String.format(NEW_THREAD_FORMAT, tab, s, s, tab, s);
+        for (int s = 1; s <= stepCount; ++s) str += String.format(JOIN_FORMAT, tab, s);
+        return str;
     }
 
     private String createPrecondStep(final String tab, final Map<String, Object> config) {

@@ -28,4 +28,7 @@ public interface Converter {
     String FORIN_FORMAT = "for( %s in %s ){";
     String WHILE_FORMAT = "while( true ){";
     String COMMAND_FORMAT = "%s var cmd_%d = new java.lang.ProcessBuilder()\n%s.command(\"sh\", \"-c\", %s)\n%s.start();";
+    String THREAD_TYPE_FORMAT = "var Thread = Java.type('java.lang.Thread');\n";
+    String NEW_THREAD_FORMAT = "%sthread%d  = new Thread(func%d);\n%sthread%d.start();\n";
+    String JOIN_FORMAT = "%sthread%d.join();\n";
 }
