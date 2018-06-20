@@ -37,7 +37,8 @@ public class ConfigConverter implements Constants {
     private static void convert(final Map<String, Object> tree, final Map<String, Object> newTree) {
         for (String key : tree.keySet()) {
             switch (key) {
-                case KEY_LOAD: {
+                case KEY_LOAD:
+                case KEY_STORAGE: {
                     convert((Map<String, Object>) tree.get(key), newTree);
                 }
                 break;
@@ -66,8 +67,31 @@ public class ConfigConverter implements Constants {
                     //deepRemove(newTree, Arrays.asList(KEY_TEST, KEY_SCENARIO));
                     //newTree.remove(KEY_SCENARIO);
                 }
+                case KEY_RUN: {
+                    addToLoadStepSection(tree.get(key), newTree);
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(KEY_RUN)));
+                }
+                case KEY_NODE: {
+                    final Map map = new HashMap<String, Object>();
+                    map.put(KEY_NODE, tree.get(key));
+                    addToStorageNetSection(map, newTree);
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(KEY_STORAGE, KEY_NODE)));
+                }
                 break;
             }
+        }
+    }
+
+    private static void addToStorageNetSection(final Object o, final Map<String, Object> newTree) {
+        if (!((Map<String, Object>) newTree.get(KEY_STORAGE)).containsKey(KEY_NET)) {
+            ((Map<String, Object>) newTree
+                    .get(KEY_STORAGE))
+                    .put(KEY_NET, o);
+        } else {
+            ((Map<String, Object>) ((Map<String, Object>) newTree
+                    .get(KEY_STORAGE))
+                    .get(KEY_NET))
+                    .putAll((HashMap<String, Object>) o);
         }
     }
 
@@ -89,9 +113,19 @@ public class ConfigConverter implements Constants {
 
     private static void addToLoadStepSection(final Object o, final Map<String, Object> newTree) {
         if (!newTree.containsKey(KEY_LOAD)) {
-            newTree.put(KEY_LOAD, new HashMap<>());
+            final Map<String, Object> branch = new HashMap<>();
+            branch.put(KEY_STEP, o);
+            newTree.put(KEY_LOAD, branch);
+        } else if (!((Map<String, Object>) newTree.get(KEY_LOAD)).containsKey(KEY_STEP)) {
+            ((Map<String, Object>) newTree
+                    .get(KEY_LOAD))
+                    .put(KEY_STEP, o);
+        } else {
+            ((Map<String, Object>) ((Map<String, Object>) newTree
+                    .get(KEY_LOAD))
+                    .get(KEY_STEP))
+                    .putAll((HashMap<String, Object>) o);
         }
-        ((Map<String, Object>) newTree.get(KEY_LOAD)).put(KEY_STEP, o);
     }
 
     public static String convertConfigAndToJson(final Map<String, Object> oldConfig) {

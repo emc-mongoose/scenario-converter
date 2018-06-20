@@ -14,10 +14,13 @@ public interface Constants {
     String KEY_SCENARIO = "scenario";
     String KEY_STEP = "step";
     String KEY_STEPS = "steps";
+    String KEY_STORAGE = "storage";
     String KEY_TEST = "test";
     String KEY_TYPE = "type";
     String KEY_VALUE = "value";
     String KEY_JOBS = "jobs";
+    String KEY_NODE = "node";
+    String KEY_NET = "net";
 
     String VAR_PATTERN = "\\$\\{%s\\}";
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
