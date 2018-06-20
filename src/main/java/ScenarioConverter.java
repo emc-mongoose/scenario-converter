@@ -66,7 +66,7 @@ class ScenarioConverter implements Constants {
                 }
                 break;
                 case STEP_TYPE_FOR: {
-                    createAndPrintSuperConfig(tab, tree, superConfig);
+                    //createAndPrintSuperConfig(tab, tree, superConfig);
                     String str = null;
                     if (tree.containsKey(KEY_VALUE)) {
                         final Object val = tree.get(KEY_VALUE);
@@ -82,6 +82,7 @@ class ScenarioConverter implements Constants {
                         str = createForStep(tab);
 
                     System.out.print("\n" + str + "\n");
+                    createAndPrintSuperConfig(tab, tree, superConfig);
                     if (tree.containsKey(KEY_STEPS)) {
                         print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false, superConfig);
                     } else {
