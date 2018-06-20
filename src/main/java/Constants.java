@@ -17,6 +17,7 @@ public interface Constants {
     String KEY_TEST = "test";
     String KEY_TYPE = "type";
     String KEY_VALUE = "value";
+    String KEY_JOBS = "jobs";
 
     String VAR_PATTERN = "\\$\\{%s\\}";
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";

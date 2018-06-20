@@ -28,12 +28,22 @@ class ScenarioConverter implements Constants {
                 }
                 break;
                 case STEP_TYPE_SEQ: {
-                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false);
+                    if (tree.containsKey(KEY_STEPS)) {
+                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false);
+                    } else {
+                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_JOBS), false);
+                    }
                 }
                 break;
                 case STEP_TYPE_PARALLEL: {
-                    final int stepsCount = ((ArrayList<Object>) tree.get(KEY_STEPS)).size();
-                    print(tab, (ArrayList<Object>) tree.get(KEY_STEPS), true);
+                    String key_steps = null;
+                    if (tree.containsKey(KEY_STEPS)) {
+                        key_steps = KEY_STEPS;
+                    } else {
+                        key_steps = KEY_JOBS;
+                    }
+                    final int stepsCount = ((ArrayList<Object>) tree.get(key_steps)).size();
+                    print(tab, (ArrayList<Object>) tree.get(key_steps), true);
                     final String str = createParallelSteps(tab, stepsCount);
                     System.out.print("\n" + str + "\n");
                 }
@@ -59,7 +69,11 @@ class ScenarioConverter implements Constants {
                         str = createForStep(tab);
 
                     System.out.print("\n" + str + "\n");
-                    print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false);
+                    if (tree.containsKey(KEY_STEPS)) {
+                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false);
+                    } else {
+                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_JOBS), false);
+                    }
                     System.out.println(tab + "};");
                 }
                 break;

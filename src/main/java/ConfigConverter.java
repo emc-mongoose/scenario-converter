@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.akurilov.commons.collection.TreeUtil;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class ConfigConverter implements Constants {
 
@@ -16,6 +16,7 @@ public class ConfigConverter implements Constants {
             final Map<String, Object> map = new ObjectMapper()
                     .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
                     .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
+                    .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
                     .<Map<String, Object>>readValue(
                             oldConfig, new TypeReference<Map<String, Object>>() {
                             }
@@ -41,26 +42,41 @@ public class ConfigConverter implements Constants {
                 }
                 break;
                 case KEY_LIMIT: {
-                    addToLoadSection(tree.get(key), newTree);
-                    tree.remove(KEY_LIMIT);
+                    final Map map = new HashMap<String, Object>();
+                    map.put(KEY_LIMIT, tree.get(key));
+                    addToLoadStepSection(map, newTree);
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(KEY_LOAD, KEY_LIMIT)));
+                    //newTree.remove(KEY_LIMIT);
                 }
                 break;
                 case KEY_TEST: {
                     convert((Map<String, Object>) tree.get(key), newTree);
-                    tree.remove(KEY_TEST);
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(KEY_TEST)));
+                    //newTree.remove(KEY_TEST);
                 }
                 break;
                 case KEY_STEP: {
-                    addToLoadSection(tree.get(key), newTree);
-                    tree.remove(KEY_STEP);
+                    addToLoadStepSection(tree.get(key), newTree);
+                    //deepRemove(newTree, Arrays.asList(KEY_TEST, KEY_STEP));
+                    //newTree.remove(KEY_STEP);
                 }
                 break;
                 case KEY_SCENARIO: {
                     addToRunSection(tree.get(key), newTree);
-                    tree.remove(KEY_SCENARIO);
+                    //deepRemove(newTree, Arrays.asList(KEY_TEST, KEY_SCENARIO));
+                    //newTree.remove(KEY_SCENARIO);
                 }
                 break;
             }
+        }
+    }
+
+    private static void deepRemove(Map<String, Object> tree, final List<String> keys) {
+        if (keys.size() == 1)
+            tree.remove(keys.get(0));
+        else {
+            final String key = keys.remove(0);
+            deepRemove((Map<String, Object>) tree.get(key), keys);
         }
     }
 
@@ -71,7 +87,7 @@ public class ConfigConverter implements Constants {
         ((Map<String, Object>) newTree.get(KEY_RUN)).put(KEY_SCENARIO, o);
     }
 
-    private static void addToLoadSection(final Object o, final Map<String, Object> newTree) {
+    private static void addToLoadStepSection(final Object o, final Map<String, Object> newTree) {
         if (!newTree.containsKey(KEY_LOAD)) {
             newTree.put(KEY_LOAD, new HashMap<>());
         }
@@ -81,7 +97,10 @@ public class ConfigConverter implements Constants {
     public static String convertConfigAndToJson(final Map<String, Object> oldConfig) {
         String str = null;
         try {
-            str = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(convertConfig(oldConfig));
+            str = new ObjectMapper()
+                    .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(convertConfig(oldConfig));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
