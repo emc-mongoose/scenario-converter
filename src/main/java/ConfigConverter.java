@@ -35,14 +35,16 @@ public class ConfigConverter implements Constants {
     }
 
     public static String pullLoadType(final Map<String, Object> config) {
-        final String type = (String) ((Map<String, Object>) config.get(KEY_LOAD)).get(KEY_TYPE);
+        if (((Map<String, Object>) config).containsKey(KEY_LOAD) &&
+                ((Map<String, Object>) ((Map<String, Object>) config).get(KEY_LOAD)).containsKey(KEY_TYPE))
+            return (String) ((Map<String, Object>) config.get(KEY_LOAD)).get(KEY_TYPE);
 //        if (type != null) {
 //            ((Map<String, Object>) config.get(KEY_LOAD)).remove(KEY_TYPE);
 //            if (((Map<String, Object>) config.get(KEY_LOAD)).isEmpty()) {
 //                config.remove(KEY_LOAD);
 //            }
 //        }
-        return (type != null) ? type : KEY_CREATE;
+        return KEY_CREATE;
     }
 
     private static void convert(final Map<String, Object> tree, final Map<String, Object> newTree) {
