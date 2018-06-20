@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +33,14 @@ class Scenario implements Constants {
     }
 
     public static Map<String, Object> parseJson(final File scenarioSrcFile) throws IOException {
+        String lines = new String(Files.readAllBytes(scenarioSrcFile.toPath()));
+        lines = lines.replaceAll("\\\\", "\\\\\\\\\\\\");
         return new ObjectMapper()
                 .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
                 .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
+                .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, false)
                 .<Map<String, Object>>readValue(
-                        scenarioSrcFile, new TypeReference<Map<String, Object>>() {
+                        lines, new TypeReference<Map<String, Object>>() {
                         });
     }
 
