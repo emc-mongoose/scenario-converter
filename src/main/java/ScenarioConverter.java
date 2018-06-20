@@ -40,7 +40,8 @@ class ScenarioConverter implements Constants {
                     } else {
                         print(tab + TAB, (ArrayList<Object>) tree.get(KEY_JOBS), false, superConfig);
                     }
-                    superConfig.remove(superConfig.size() - 1);
+                    if (((Map<String, Object>) tree).containsKey(KEY_CONFIG))
+                        superConfig.remove(superConfig.size() - 1);
                 }
                 break;
                 case STEP_TYPE_PARALLEL: {
@@ -53,7 +54,8 @@ class ScenarioConverter implements Constants {
                     }
                     final int stepsCount = ((ArrayList<Object>) tree.get(key_steps)).size();
                     print(tab, (ArrayList<Object>) tree.get(key_steps), true, superConfig);
-                    superConfig.remove(superConfig.size() - 1);
+                    if (((Map<String, Object>) tree).containsKey(KEY_CONFIG))
+                        superConfig.remove(superConfig.size() - 1);
                     final String str = createParallelSteps(tab, stepsCount);
                     System.out.print("\n" + str + "\n");
                 }
@@ -85,7 +87,8 @@ class ScenarioConverter implements Constants {
                     } else {
                         print(tab + TAB, (ArrayList<Object>) tree.get(KEY_JOBS), false, superConfig);
                     }
-                    superConfig.remove(superConfig.size() - 1);
+                    if (((Map<String, Object>) tree).containsKey(KEY_CONFIG))
+                        superConfig.remove(superConfig.size() - 1);
                     System.out.println(tab + "};");
                 }
                 break;
@@ -208,14 +211,51 @@ class ScenarioConverter implements Constants {
 
     private static String createStepLoad(final String tab, final Map<String, Object> config, final List<String> superConfig) {
         final String varName = "step_" + (stepCounter.incrementAndGet());
-        String str = tab + "var " + varName + " = Load();\n";
+        String str = tab;
+        final String type = (config != null) ? ConfigConverter.pullLoadType(config) : "";
+        //TODO: verifyLoad, precondition, mixed ... and others
+        switch (type) {
+            case KEY_CREATE: {
+                str += "var " + varName + " CreateLoad();\n";
+            }
+            break;
+            case KEY_READ: {
+                str += "var " + varName + " ReadLoad();\n";
+            }
+            break;
+            case KEY_UPDATE: {
+                str += "var " + varName + " UpdateLoad();\n";
+            }
+            break;
+            case KEY_DELETE: {
+                str += "var " + varName + " DeleteLoad();\n";
+            }
+            break;
+            default: {
+                str += "var " + varName + " Load();\n";
+            }
+        }
         for (String configName : superConfig) {
             str += tab + varName + ".config(" + configName + ");\n";
         }
-        str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
+        if (config != null)
+            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
         str += tab + varName + ".start();";
         return str;
     }
+
+//    private static String createStepLoad(final String tab, final String loadType, final Map<String, Object> config, final List<String> superConfig) {
+//        switch ()
+//        final String varName = "step_" + (stepCounter.incrementAndGet());
+//        String str = tab;
+//        for (String configName : superConfig) {
+//            str += tab + varName + ".config(" + configName + ");\n";
+//        }
+//        if (config != null)
+//            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
+//        str += tab + varName + ".start();";
+//        return str;
+//    }
 
     private static String createPrecondStep(final String tab, final Map<String, Object> config, final List<String> superConfig) {
         final String varName = "step_" + (stepCounter.incrementAndGet());
@@ -223,7 +263,8 @@ class ScenarioConverter implements Constants {
         for (String configName : superConfig) {
             str += tab + varName + ".config(" + configName + ");\n";
         }
-        str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
+        if (config != null)
+            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
         str += tab + varName + ".start();";
         return str;
     }

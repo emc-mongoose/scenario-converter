@@ -8,7 +8,8 @@ public class Main {
         final Path scenarioPath = (args.length != 0)
                 ? Paths.get(args[0])
                 //: Paths.get("example", "scenario", "json", "test.json");
-                : Paths.get("example", "scenario", "json", "loop", "by-count-arg.json");
+                //: Paths.get("example", "scenario", "json", "loop", "by-count-arg.json");
+                : Paths.get("example", "scenario", "json", "dynamic", "read-files-from-variable-path.json");
         ScenarioConverter.print(new Scenario(Scenario.parseJson(scenarioPath.toFile())));
     }
 }

@@ -34,6 +34,17 @@ public class ConfigConverter implements Constants {
         return newConfig;
     }
 
+    public static String pullLoadType(final Map<String, Object> config) {
+        final String type = (String) ((Map<String, Object>) config.get(KEY_LOAD)).get(KEY_TYPE);
+//        if (type != null) {
+//            ((Map<String, Object>) config.get(KEY_LOAD)).remove(KEY_TYPE);
+//            if (((Map<String, Object>) config.get(KEY_LOAD)).isEmpty()) {
+//                config.remove(KEY_LOAD);
+//            }
+//        }
+        return (type != null) ? type : KEY_CREATE;
+    }
+
     private static void convert(final Map<String, Object> tree, final Map<String, Object> newTree) {
         for (String key : tree.keySet()) {
             switch (key) {
@@ -67,10 +78,12 @@ public class ConfigConverter implements Constants {
                     //deepRemove(newTree, Arrays.asList(KEY_TEST, KEY_SCENARIO));
                     //newTree.remove(KEY_SCENARIO);
                 }
+                break;
                 case KEY_RUN: {
                     addToLoadStepSection(tree.get(key), newTree);
                     deepRemove(newTree, new ArrayList<>(Arrays.asList(KEY_RUN)));
                 }
+                break;
                 case KEY_NODE: {
                     final Map map = new HashMap<String, Object>();
                     map.put(KEY_NODE, tree.get(key));
