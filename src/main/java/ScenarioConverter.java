@@ -217,23 +217,23 @@ class ScenarioConverter {
         //TODO: verifyLoad, precondition, mixed ... and others
         switch (type) {
             case Constants.KEY_CREATE: {
-                str += "var " + varName + " CreateLoad();\n";
+                str += "var " + varName + " = CreateLoad();\n";
             }
             break;
             case Constants.KEY_READ: {
-                str += "var " + varName + " ReadLoad();\n";
+                str += "var " + varName + " = ReadLoad();\n";
             }
             break;
             case Constants.KEY_UPDATE: {
-                str += "var " + varName + " UpdateLoad();\n";
+                str += "var " + varName + " = UpdateLoad();\n";
             }
             break;
             case Constants.KEY_DELETE: {
-                str += "var " + varName + " DeleteLoad();\n";
+                str += "var " + varName + " = DeleteLoad();\n";
             }
             break;
             default: {
-                str += "var " + varName + " Load();\n";
+                str += "var " + varName + " = Load();\n";
             }
         }
         for (String configName : superConfig) {
@@ -241,7 +241,7 @@ class ScenarioConverter {
         }
         if (config != null)
             str += tab + varName + ".config(" + convertConfig(tab + Constants.TAB, config) + ");\n";
-        str += tab + varName + ".start();";
+        str += tab + varName + ".run();";
         return str;
     }
 
@@ -254,7 +254,7 @@ class ScenarioConverter {
 //        }
 //        if (config != null)
 //            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
-//        str += tab + varName + ".start();";
+//        str += tab + varName + ".run();";
 //        return str;
 //    }
 
@@ -266,7 +266,7 @@ class ScenarioConverter {
         }
         if (config != null)
             str += tab + varName + ".config(" + convertConfig(tab + Constants.TAB, config) + ");\n";
-        str += tab + varName + ".start();";
+        str += tab + varName + ".run();";
         return str;
     }
 
