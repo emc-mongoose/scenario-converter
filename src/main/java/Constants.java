@@ -35,7 +35,7 @@ public interface Constants {
     String FOR_FORMAT = "for( var %s = %s; %s < %s; %s += %s ){";
     String FORIN_FORMAT = "for( %s in %s ){";
     String WHILE_FORMAT = "while( true ){";
-    String COMMAND_FORMAT = "%svar cmd_%d = new java.lang.ProcessBuilder()\n%s" + TAB + ".command(\"sh\", \"-c\", %s)\n%s" + TAB + ".start();";
+    String COMMAND_FORMAT = "%svar cmd_%d = new java.lang.ProcessBuilder()\n%s" + TAB + ".command(\"sh\", \"-c\", %s)\n%s" + TAB + ".run();";
     String THREAD_TYPE_FORMAT = "var Thread = Java.type('java.lang.Thread');\n";
     String NEW_THREAD_FORMAT = "%sthread%d  = new Thread(func%d);\n%sthread%d.start();\n";
     String JOIN_FORMAT = "%sthread%d.join();\n";

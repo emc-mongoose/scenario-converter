@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Scenario implements Constants {
+class Scenario {
 
     private final Map<String, Object> stepTree;
     private final Set<String> loopVarList;
@@ -26,7 +26,8 @@ class Scenario implements Constants {
         envVarList = new HashSet<>();
         allVarList = new HashSet<>();
 
-        extractVariables(stepTree);
+        extractLoopVariables(stepTree);
+        extractEnvVariables(stepTree);
         allVarList.addAll(envVarList);
         allVarList.addAll(loopVarList);
     }
@@ -60,7 +61,7 @@ class Scenario implements Constants {
     }
 
     private void extractEnvVariables(final String str) {
-        final Pattern pattern = Pattern.compile(String.format(VAR_PATTERN, WITHOUT_SPACES_PATTERN));
+        final Pattern pattern = Pattern.compile(String.format(Constants.VAR_PATTERN, Constants.WITHOUT_SPACES_PATTERN));
         final Matcher matcher = pattern.matcher((String) str);
         while (matcher.find()) {
             String tmp = matcher.group(0).replaceAll("\\{|\\}|\\$", "");
@@ -69,33 +70,41 @@ class Scenario implements Constants {
         }
     }
 
-    private void extractVariables(final Object o) {
-        if (o instanceof Map)
-            extractVariables((Map) o);
-        else if (o instanceof List)
-            extractVariables((List) o);
-    }
-
-    private void extractVariables(final List<Object> list) {
-        for (Object item : list) {
-            if (item instanceof Map)
-                extractVariables((Map<String, Object>) item);
-        }
-    }
-
-    private void extractVariables(final Map<String, Object> tree) {
-        if (tree.containsValue(STEP_TYPE_FOR) & tree.containsKey(KEY_IN))
-            loopVarList.add((String) tree.get(KEY_VALUE));
-        else {
-            for (String key : tree.keySet()) {
-                if (tree.get(key) instanceof String)
-                    extractEnvVariables((String) tree.get(key));
-                extractVariables(tree.get(key));
+    private void extractEnvVariables(final Object tree) {
+        if (tree instanceof List) {
+            for (Object item : (List) tree) {
+                extractEnvVariables(item);
+            }
+        } else {
+            if (tree instanceof Map) {
+                for (Object key : ((Map) tree).keySet()) {
+                    if (((Map) tree).get(key) instanceof String)
+                        extractEnvVariables((String) ((Map) tree).get(key));
+                    else
+                        extractEnvVariables(((Map) tree).get(key));
+                }
             }
         }
-        if (tree.containsKey(KEY_STEPS))
-            extractVariables(tree.get(KEY_STEPS));
+    }
 
+    private void extractLoopVariables(final Object tree) {
+        if (tree instanceof List) {
+            for (Object item : (List) tree) {
+                extractLoopVariables(item);
+            }
+        } else {
+            if (tree instanceof Map) {
+                if (((Map) tree).containsValue(Constants.STEP_TYPE_FOR) & ((Map) tree).containsKey(Constants.KEY_IN))
+                    loopVarList.add((String) ((Map) tree).get(Constants.KEY_VALUE));
+                else {
+                    for (Object key : ((Map) tree).keySet()) {
+                        extractLoopVariables(((Map) tree).get(key));
+                    }
+                }
+                if (((Map) tree).containsKey(Constants.KEY_STEPS))
+                    extractLoopVariables(((Map) tree).get(Constants.KEY_STEPS));
+            }
+        }
     }
 
 }

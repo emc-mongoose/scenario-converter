@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class ScenarioConverter implements Constants {
+class ScenarioConverter {
 
     private static final AtomicInteger stepCounter = new AtomicInteger(0);
     private static final AtomicInteger cmdCounter = new AtomicInteger(0);
@@ -25,53 +25,53 @@ class ScenarioConverter implements Constants {
     }
 
     private static void print(final String tab, final Map<String, Object> tree, final boolean parallel, final List<String> superConfig) {
-        if (tree.containsKey(KEY_TYPE)) {
-            String key = KEY_TYPE;
+        if (tree.containsKey(Constants.KEY_TYPE)) {
+            String key = Constants.KEY_TYPE;
             switch ((String) tree.get(key)) {
-                case STEP_TYPE_COMMAND: {
-                    final String str = createCommandStep(tab, (String) tree.get(KEY_VALUE));
+                case Constants.STEP_TYPE_COMMAND: {
+                    final String str = createCommandStep(tab, (String) tree.get(Constants.KEY_VALUE));
                     System.out.print("\n" + str + "\n");
                 }
                 break;
-                case STEP_TYPE_SEQ: {
+                case Constants.STEP_TYPE_SEQ: {
                     createAndPrintSuperConfig(tab, tree, superConfig);
-                    if (tree.containsKey(KEY_STEPS)) {
-                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false, superConfig);
+                    if (tree.containsKey(Constants.KEY_STEPS)) {
+                        print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, superConfig);
                     } else {
-                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_JOBS), false, superConfig);
+                        print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_JOBS), false, superConfig);
                     }
-                    if (((Map<String, Object>) tree).containsKey(KEY_CONFIG))
+                    if (((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG))
                         superConfig.remove(superConfig.size() - 1);
                 }
                 break;
-                case STEP_TYPE_PARALLEL: {
+                case Constants.STEP_TYPE_PARALLEL: {
                     createAndPrintSuperConfig(tab, tree, superConfig);
                     String key_steps = null;
-                    if (tree.containsKey(KEY_STEPS)) {
-                        key_steps = KEY_STEPS;
+                    if (tree.containsKey(Constants.KEY_STEPS)) {
+                        key_steps = Constants.KEY_STEPS;
                     } else {
-                        key_steps = KEY_JOBS;
+                        key_steps = Constants.KEY_JOBS;
                     }
                     final int stepsCount = ((ArrayList<Object>) tree.get(key_steps)).size();
                     print(tab, (ArrayList<Object>) tree.get(key_steps), true, superConfig);
-                    if (((Map<String, Object>) tree).containsKey(KEY_CONFIG))
+                    if (((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG))
                         superConfig.remove(superConfig.size() - 1);
                     final String str = createParallelSteps(tab, stepsCount);
                     System.out.print("\n" + str + "\n");
                 }
                 break;
-                case STEP_TYPE_PRECONDITION: {
-                    final String str = createPrecondStep(tab, (Map<String, Object>) tree.get(KEY_CONFIG), superConfig);
+                case Constants.STEP_TYPE_PRECONDITION: {
+                    final String str = createPrecondStep(tab, (Map<String, Object>) tree.get(Constants.KEY_CONFIG), superConfig);
                     System.out.print("\n" + str + "\n");
                 }
                 break;
-                case STEP_TYPE_FOR: {
+                case Constants.STEP_TYPE_FOR: {
                     //createAndPrintSuperConfig(tab, tree, superConfig);
                     String str = null;
-                    if (tree.containsKey(KEY_VALUE)) {
-                        final Object val = tree.get(KEY_VALUE);
-                        if (tree.containsKey(KEY_IN)) {
-                            final Object in = tree.get(KEY_IN);
+                    if (tree.containsKey(Constants.KEY_VALUE)) {
+                        final Object val = tree.get(Constants.KEY_VALUE);
+                        if (tree.containsKey(Constants.KEY_IN)) {
+                            final Object in = tree.get(Constants.KEY_IN);
                             if (in instanceof List) //by seq
                                 str = createForStep(tab, (String) val, (List) in);
                             else //by range
@@ -83,18 +83,18 @@ class ScenarioConverter implements Constants {
 
                     System.out.print("\n" + str + "\n");
                     createAndPrintSuperConfig(tab, tree, superConfig);
-                    if (tree.containsKey(KEY_STEPS)) {
-                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_STEPS), false, superConfig);
+                    if (tree.containsKey(Constants.KEY_STEPS)) {
+                        print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, superConfig);
                     } else {
-                        print(tab + TAB, (ArrayList<Object>) tree.get(KEY_JOBS), false, superConfig);
+                        print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_JOBS), false, superConfig);
                     }
-                    if (((Map<String, Object>) tree).containsKey(KEY_CONFIG))
+                    if (((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG))
                         superConfig.remove(superConfig.size() - 1);
                     System.out.println(tab + "};");
                 }
                 break;
-                case STEP_TYPE_LOAD: {
-                    final String str = createStepLoad(tab, (Map<String, Object>) tree.get(KEY_CONFIG), superConfig);
+                case Constants.STEP_TYPE_LOAD: {
+                    final String str = createStepLoad(tab, (Map<String, Object>) tree.get(Constants.KEY_CONFIG), superConfig);
                     System.out.print("\n" + str + "\n");
                 }
                 break;
@@ -105,8 +105,8 @@ class ScenarioConverter implements Constants {
     }
 
     private static void createAndPrintSuperConfig(final String tab, final Object tree, final List superConfig) {
-        if (!((Map<String, Object>) tree).containsKey(KEY_CONFIG)) return;
-        final Object config = ((Map<String, Object>) tree).get(KEY_CONFIG);
+        if (!((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG)) return;
+        final Object config = ((Map<String, Object>) tree).get(Constants.KEY_CONFIG);
         final String str = createSuperConfig(tab, (Map<String, Object>) config);
         superConfig.add("superConfig_" + superConfigCounter);
         System.out.print("\n" + str + "\n");
@@ -123,7 +123,7 @@ class ScenarioConverter implements Constants {
             if (step instanceof Map) {
                 if (parallel)
                     System.out.println("\n" + tab + "function func" + (parallelCounter.incrementAndGet()) + "() {");
-                print(tab + TAB, (Map<String, Object>) step, parallel, superConfig);
+                print(tab + Constants.TAB, (Map<String, Object>) step, parallel, superConfig);
                 if (parallel) System.out.println(tab + "};");
             }
         }
@@ -131,11 +131,11 @@ class ScenarioConverter implements Constants {
 
     private static void replaceVariables(final Map<String, Object> tree) {
         for (String key : tree.keySet()) {
-            if (key.equals(KEY_TYPE) && tree.get(key).equals(STEP_TYPE_COMMAND))
+            if (key.equals(Constants.KEY_TYPE) && tree.get(key).equals(Constants.STEP_TYPE_COMMAND))
                 break;
             else if (tree.get(key) instanceof String) {
                 for (String var : oldScenario.getAllVarList()) {
-                    tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(VAR_PATTERN, var), var));
+                    tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var), var));
                 }
             } else replaceVariables(tree.get(key));
         }
@@ -149,7 +149,7 @@ class ScenarioConverter implements Constants {
             }
         } else {
             for (String var : oldScenario.getAllVarList()) {
-                Collections.replaceAll(list, String.format(VAR_FORMAT, var), var);
+                Collections.replaceAll(list, String.format(Constants.VAR_FORMAT, var), var);
             }
         }
     }
@@ -164,29 +164,29 @@ class ScenarioConverter implements Constants {
     private static String createCommandStep(final String tab, final String cmdLine) {
         String newCmdLine = cmdLine;
         for (String var : oldScenario.getLoopVarList()) {
-            newCmdLine = newCmdLine.replaceAll(String.format(VAR_PATTERN, var), "\" + " + var + " + \"");
+            newCmdLine = newCmdLine.replaceAll(String.format(Constants.VAR_PATTERN, var), "\" + " + var + " + \"");
         }
-        return String.format(COMMAND_FORMAT, tab, cmdCounter.incrementAndGet(), tab, "\"" + newCmdLine + "\"", tab);
+        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.incrementAndGet(), tab, "\"" + newCmdLine + "\"", tab);
     }
 
     private static String createParallelSteps(final String tab, final int stepCount) {
-        String str = tab + THREAD_TYPE_FORMAT;
+        String str = tab + Constants.THREAD_TYPE_FORMAT;
         for (int s = 1; s <= stepCount; ++s) {
-            str += String.format(NEW_THREAD_FORMAT, tab, s, s, tab, s);
+            str += String.format(Constants.NEW_THREAD_FORMAT, tab, s, s, tab, s);
         }
         for (int s = 1; s <= stepCount; ++s) {
-            str += String.format(JOIN_FORMAT, tab, s);
+            str += String.format(Constants.JOIN_FORMAT, tab, s);
         }
         return str;
     }
 
     private static String createSeqVariable(final String varName, final List seq) {
-        return "var " + varName + SEQ_POSTFIX + " = " + seq.toString() + ";";
+        return "var " + varName + Constants.SEQ_POSTFIX + " = " + seq.toString() + ";";
     }
 
     private static String createForStep(final String tab, final String varName, final List seq) {
         String str = tab + createSeqVariable(varName, seq) + "\n";
-        str += tab + String.format(FORIN_FORMAT, varName, varName + SEQ_POSTFIX);
+        str += tab + String.format(Constants.FORIN_FORMAT, varName, varName + Constants.SEQ_POSTFIX);
         return str;
     }
 
@@ -203,11 +203,11 @@ class ScenarioConverter implements Constants {
     }
 
     private static String createForLine(final String varName, final String startValue, final String endValue, final String step) {
-        return String.format(FOR_FORMAT, varName, startValue, varName, endValue, varName, step);
+        return String.format(Constants.FOR_FORMAT, varName, startValue, varName, endValue, varName, step);
     }
 
     private static String createForStep(String tab) {
-        return tab + WHILE_FORMAT;
+        return tab + Constants.WHILE_FORMAT;
     }
 
     private static String createStepLoad(final String tab, final Map<String, Object> config, final List<String> superConfig) {
@@ -216,19 +216,19 @@ class ScenarioConverter implements Constants {
         final String type = (config != null) ? ConfigConverter.pullLoadType(config) : "";
         //TODO: verifyLoad, precondition, mixed ... and others
         switch (type) {
-            case KEY_CREATE: {
+            case Constants.KEY_CREATE: {
                 str += "var " + varName + " CreateLoad();\n";
             }
             break;
-            case KEY_READ: {
+            case Constants.KEY_READ: {
                 str += "var " + varName + " ReadLoad();\n";
             }
             break;
-            case KEY_UPDATE: {
+            case Constants.KEY_UPDATE: {
                 str += "var " + varName + " UpdateLoad();\n";
             }
             break;
-            case KEY_DELETE: {
+            case Constants.KEY_DELETE: {
                 str += "var " + varName + " DeleteLoad();\n";
             }
             break;
@@ -240,7 +240,7 @@ class ScenarioConverter implements Constants {
             str += tab + varName + ".config(" + configName + ");\n";
         }
         if (config != null)
-            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
+            str += tab + varName + ".config(" + convertConfig(tab + Constants.TAB, config) + ");\n";
         str += tab + varName + ".start();";
         return str;
     }
@@ -265,7 +265,7 @@ class ScenarioConverter implements Constants {
             str += tab + varName + ".config(" + configName + ");\n";
         }
         if (config != null)
-            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
+            str += tab + varName + ".config(" + convertConfig(tab + Constants.TAB, config) + ");\n";
         str += tab + varName + ".start();";
         return str;
     }
@@ -274,7 +274,7 @@ class ScenarioConverter implements Constants {
         String str = ConfigConverter.convertConfigAndToJson(map);
         str = str.replaceAll("\\n", "\n" + tab);
         for (String var : oldScenario.getAllVarList()) {
-            str = str.replaceAll(String.format(QUOTES_PATTERN, var), var);
+            str = str.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
         }
         return str;
     }
