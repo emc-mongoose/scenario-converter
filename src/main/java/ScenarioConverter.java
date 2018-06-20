@@ -4,11 +4,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class ScenarioConverter implements Constants {
 
-    final private static AtomicInteger stepCounter = new AtomicInteger(0);
-    final private static AtomicInteger cmdCounter = new AtomicInteger(0);
-    final private static AtomicInteger forCounter = new AtomicInteger(0);
-    final private static AtomicInteger parallelCounter = new AtomicInteger(0);
-    final private static AtomicInteger superConfigCounter = new AtomicInteger(0);
+    private static final AtomicInteger stepCounter = new AtomicInteger(0);
+    private static final AtomicInteger cmdCounter = new AtomicInteger(0);
+    private static final AtomicInteger forCounter = new AtomicInteger(0);
+    private static final AtomicInteger parallelCounter = new AtomicInteger(0);
+    private static final AtomicInteger superConfigCounter = new AtomicInteger(0);
 
     private static Scenario oldScenario;
 

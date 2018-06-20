@@ -14,11 +14,10 @@ import java.util.regex.Pattern;
 
 class Scenario implements Constants {
 
-    final private Map<String, Object> stepTree;
-
-    final private Set<String> loopVarList;
-    final private Set<String> envVarList;
-    final private Set<String> allVarList;
+    private final Map<String, Object> stepTree;
+    private final Set<String> loopVarList;
+    private final Set<String> envVarList;
+    private final Set<String> allVarList;
 
     public Scenario(final Map<String, Object> tree) {
         stepTree = tree;
