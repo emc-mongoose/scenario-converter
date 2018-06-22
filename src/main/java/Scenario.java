@@ -38,7 +38,6 @@ class Scenario {
         return new ObjectMapper()
                 .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
                 .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
-                .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, false)
                 .<Map<String, Object>>readValue(
                         lines, new TypeReference<Map<String, Object>>() {
                         });

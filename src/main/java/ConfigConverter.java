@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,7 +17,6 @@ public class ConfigConverter {
             final Map<String, Object> map = new ObjectMapper()
                     .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
                     .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
-                    .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
                     .<Map<String, Object>>readValue(
                             oldConfig, new TypeReference<Map<String, Object>>() {
                             }
@@ -147,9 +147,10 @@ public class ConfigConverter {
         String str = null;
         try {
             str = new ObjectMapper()
-                    .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
                     .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(convertConfig(oldConfig));
+                    .writeValueAsString(convertConfig(oldConfig))
+                    .replaceAll("\\\\\"", "\"");
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

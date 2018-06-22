@@ -135,7 +135,11 @@ class ScenarioConverter {
                 break;
             else if (tree.get(key) instanceof String) {
                 for (String var : oldScenario.getAllVarList()) {
-                    tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var), var));
+                    if (key.equals(Constants.KEY_FILE) || key.equals(Constants.KEY_PATH)) {
+                        tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var),
+                                "\" + " + var + " + \""));
+                    } else
+                        tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var), var));
                 }
             } else replaceVariables(tree.get(key));
         }
@@ -244,19 +248,6 @@ class ScenarioConverter {
         str += tab + varName + ".run();";
         return str;
     }
-
-//    private static String createStepLoad(final String tab, final String loadType, final Map<String, Object> config, final List<String> parentConfig) {
-//        switch ()
-//        final String varName = "step_" + (stepCounter.incrementAndGet());
-//        String str = tab;
-//        for (String configName : parentConfig) {
-//            str += tab + varName + ".config(" + configName + ");\n";
-//        }
-//        if (config != null)
-//            str += tab + varName + ".config(" + convertConfig(tab + TAB, config) + ");\n";
-//        str += tab + varName + ".run();";
-//        return str;
-//    }
 
     private static String createPrecondStep(final String tab, final Map<String, Object> config, final List<String> parentConfig) {
         final String varName = "step_" + (stepCounter.incrementAndGet());
