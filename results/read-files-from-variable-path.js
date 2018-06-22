@@ -13,6 +13,7 @@ var parentConfig_1 = {
   "load" : {
     "step" : {
       "limit" : {
+        "count" : 10000,
         "concurrency" : 10
       }
     }

@@ -1,11 +1,13 @@
 
         var cmd_1 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "rm $ITEM_INPUT_FILE")
-            .run();
+            .start();
+        cmd_1.waitFor();
 
         var cmd_2 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "export ITEM_INPUT_FILE=10K_items.csv")
-            .run();
+            .start();
+        cmd_2.waitFor();
 
         var step_1 = PreconditionLoad();
         step_1.config({
@@ -52,20 +54,23 @@
 
                     var cmd_3 = new java.lang.ProcessBuilder()
                         .command("sh", "-c", "echo " + itemSize + "")
-                        .run();
+                        .start();
+                    cmd_3.waitFor();
 
                     var concurrencyLimit_seq = [1, 10, itemSize];
                     for( concurrencyLimit in concurrencyLimit_seq ){
 
                             var cmd_4 = new java.lang.ProcessBuilder()
                                 .command("sh", "-c", "echo " + concurrencyLimit + "; echo test")
-                                .run();
+                                .start();
+                            cmd_4.waitFor();
 
                             var step_3 = CreateLoad();
                             step_3.config({
                                   "load" : {
                                     "step" : {
                                       "limit" : {
+                                        "concurrency" : concurrencyLimit,
                                         "time" : "1m"
                                       }
                                     }

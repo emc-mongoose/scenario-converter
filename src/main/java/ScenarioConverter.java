@@ -175,7 +175,7 @@ class ScenarioConverter {
             newCmdLine = newCmdLine.replaceAll(String.format(Constants.VAR_PATTERN, var), "\" + " + var + " + \"");
         }
         return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.incrementAndGet(), tab, "\"" + newCmdLine + "\"", tab) +
-                "\n" + tab + "cmd_" + cmdCounter + ".waitFor()";
+                "\n" + tab + "cmd_" + cmdCounter + ".waitFor();";
     }
 
     private static String createParallelSteps(final String tab, final int stepCount) {

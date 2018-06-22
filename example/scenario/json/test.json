@@ -89,7 +89,7 @@
                     "test": {
                       "step": {
                         "limit": {
-                          "time": "1m"
+                          "time": "20s"
                         }
                       }
                     }

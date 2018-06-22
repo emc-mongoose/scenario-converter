@@ -22,7 +22,8 @@ step_1.config({
       "load" : {
         "step" : {
           "limit" : {
-            "count" : 10000
+            "count" : 10000,
+            "concurrency" : 10
           }
         }
       }

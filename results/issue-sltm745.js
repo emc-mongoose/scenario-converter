@@ -23,6 +23,7 @@ var parentConfig_1 = {
   "load" : {
     "step" : {
       "limit" : {
+        "count" : 100000,
         "concurrency" : 1000
       }
     }
@@ -31,13 +32,7 @@ var parentConfig_1 = {
 
         for( var i = 1; i < 5; i += 1 ){
 
-        var parentConfig_2 = {
-          "load" : {
-            "step" : {
-              "id" : "LONGEVITY-" + iteration + ""
-            }
-          }
-        };
+        var parentConfig_2 = { };
 
                 var step_1 = Load();
                 step_1.config(parentConfig_1);

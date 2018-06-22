@@ -48,10 +48,7 @@ var parentConfig_1 = {
                 step_1.config(parentConfig_2);
                 step_1.config({
                       "load" : {
-                        "type" : "create",
-                        "step" : {
-                          "id" : "C" + threads + "_" + size + ""
-                        }
+                        "type" : "create"
                       },
                       "item" : {
                         "output" : {
@@ -66,10 +63,7 @@ var parentConfig_1 = {
                 step_2.config(parentConfig_2);
                 step_2.config({
                       "load" : {
-                        "type" : "read",
-                        "step" : {
-                          "id" : "R" + threads + "_" + size + ""
-                        }
+                        "type" : "read"
                       },
                       "item" : {
                         "input" : {
@@ -84,10 +78,7 @@ var parentConfig_1 = {
                 step_3.config(parentConfig_2);
                 step_3.config({
                       "load" : {
-                        "type" : "delete",
-                        "step" : {
-                          "id" : "D" + threads + "_" + size + ""
-                        }
+                        "type" : "delete"
                       },
                       "item" : {
                         "input" : {

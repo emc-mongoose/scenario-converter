@@ -18,6 +18,8 @@ var parentConfig_1 = {
               "load" : {
                 "step" : {
                   "limit" : {
+                    "count" : 10000,
+                    "time" : INIT_RUN_TIME,
                     "concurrency" : 40
                   }
                 }
@@ -45,6 +47,8 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "count" : 10000,
+                    "time" : INIT_RUN_TIME,
                     "concurrency" : 40
                   }
                 },
@@ -64,15 +68,16 @@ var parentConfig_1 = {
 
         var cmd_1 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_1.waitFor();
 
         var step_3 = CreateLoad();
         step_3.config(parentConfig_1);
         step_3.config({
               "load" : {
                 "step" : {
-                  "id" : "MAX-W10KB",
                   "limit" : {
+                    "time" : RUN_TIME,
                     "concurrency" : 320
                   }
                 }
@@ -91,15 +96,16 @@ var parentConfig_1 = {
 
         var cmd_2 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_2.waitFor();
 
         var step_4 = CreateLoad();
         step_4.config(parentConfig_1);
         step_4.config({
               "load" : {
                 "step" : {
-                  "id" : "MAX-W100KB",
                   "limit" : {
+                    "time" : RUN_TIME,
                     "concurrency" : 320
                   }
                 }
@@ -118,15 +124,16 @@ var parentConfig_1 = {
 
         var cmd_3 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_3.waitFor();
 
         var step_5 = CreateLoad();
         step_5.config(parentConfig_1);
         step_5.config({
               "load" : {
                 "step" : {
-                  "id" : "MAX-W1MB",
                   "limit" : {
+                    "time" : RUN_TIME,
                     "concurrency" : 160
                   }
                 }
@@ -145,15 +152,16 @@ var parentConfig_1 = {
 
         var cmd_4 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_4.waitFor();
 
         var step_6 = CreateLoad();
         step_6.config(parentConfig_1);
         step_6.config({
               "load" : {
                 "step" : {
-                  "id" : "MAX-W10MB",
                   "limit" : {
+                    "time" : RUN_TIME,
                     "concurrency" : 80
                   }
                 }
@@ -172,15 +180,16 @@ var parentConfig_1 = {
 
         var cmd_5 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_5.waitFor();
 
         var step_7 = CreateLoad();
         step_7.config(parentConfig_1);
         step_7.config({
               "load" : {
                 "step" : {
-                  "id" : "MAX-W100MB",
                   "limit" : {
+                    "time" : RUN_TIME,
                     "concurrency" : 80
                   }
                 }
@@ -199,15 +208,16 @@ var parentConfig_1 = {
 
         var cmd_6 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_6.waitFor();
 
         var step_8 = CreateLoad();
         step_8.config(parentConfig_1);
         step_8.config({
               "load" : {
                 "step" : {
-                  "id" : "MAX-W200MB",
                   "limit" : {
+                    "time" : RUN_TIME,
                     "concurrency" : 80
                   }
                 }
@@ -226,7 +236,8 @@ var parentConfig_1 = {
 
         var cmd_7 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_7.waitFor();
 
         var step_9 = ReadLoad();
         step_9.config(parentConfig_1);
@@ -239,9 +250,9 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "concurrency" : 320,
                     "time" : RUN_TIME
-                  },
-                  "id" : "MAX-R10KB"
+                  }
                 },
                 "type" : "read"
               },
@@ -260,7 +271,8 @@ var parentConfig_1 = {
 
         var cmd_8 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_8.waitFor();
 
         var step_10 = ReadLoad();
         step_10.config(parentConfig_1);
@@ -273,9 +285,9 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "concurrency" : 320,
                     "time" : RUN_TIME
-                  },
-                  "id" : "MAX-R100KB"
+                  }
                 },
                 "type" : "read"
               },
@@ -294,7 +306,8 @@ var parentConfig_1 = {
 
         var cmd_9 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_9.waitFor();
 
         var step_11 = ReadLoad();
         step_11.config(parentConfig_1);
@@ -307,9 +320,9 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "concurrency" : 160,
                     "time" : RUN_TIME
-                  },
-                  "id" : "MAX-R1MB"
+                  }
                 },
                 "type" : "read"
               },
@@ -328,7 +341,8 @@ var parentConfig_1 = {
 
         var cmd_10 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_10.waitFor();
 
         var step_12 = ReadLoad();
         step_12.config(parentConfig_1);
@@ -341,9 +355,9 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "concurrency" : 80,
                     "time" : RUN_TIME
-                  },
-                  "id" : "MAX-R10MB"
+                  }
                 },
                 "type" : "read"
               },
@@ -362,7 +376,8 @@ var parentConfig_1 = {
 
         var cmd_11 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_11.waitFor();
 
         var step_13 = ReadLoad();
         step_13.config(parentConfig_1);
@@ -375,9 +390,9 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "concurrency" : 80,
                     "time" : RUN_TIME
-                  },
-                  "id" : "MAX-R100MB"
+                  }
                 },
                 "type" : "read"
               },
@@ -396,7 +411,8 @@ var parentConfig_1 = {
 
         var cmd_12 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_12.waitFor();
 
         var step_14 = ReadLoad();
         step_14.config(parentConfig_1);
@@ -409,9 +425,9 @@ var parentConfig_1 = {
                 },
                 "step" : {
                   "limit" : {
+                    "concurrency" : 80,
                     "time" : RUN_TIME
-                  },
-                  "id" : "MAX-R200MB"
+                  }
                 },
                 "type" : "read"
               },
@@ -430,4 +446,5 @@ var parentConfig_1 = {
 
         var cmd_13 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .run();
+            .start();
+        cmd_13.waitFor();
