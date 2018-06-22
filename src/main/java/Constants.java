@@ -9,6 +9,7 @@ public interface Constants {
     String KEY_CONFIG = "config";
     String KEY_CREATE = "create";
     String KEY_DELETE = "delete";
+    String KEY_ID = "id";
     String KEY_IN = "in";
     String KEY_LIMIT = "limit";
     String KEY_LOAD = "load";
@@ -41,5 +42,4 @@ public interface Constants {
     String THREAD_TYPE_FORMAT = "var Thread = Java.type('java.lang.Thread');\n";
     String NEW_THREAD_FORMAT = "%sthread%d  = new Thread(func%d);\n%sthread%d.start();\n";
     String JOIN_FORMAT = "%sthread%d.join();\n";
-    char QUOTE = '"';
 }

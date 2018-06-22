@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 class ScenarioConverter {
 
@@ -135,7 +136,7 @@ class ScenarioConverter {
                 break;
             else if (tree.get(key) instanceof String) {
                 for (String var : oldScenario.getAllVarList()) {
-                    if (key.equals(Constants.KEY_FILE) || key.equals(Constants.KEY_PATH)) {
+                    if (key.equals(Constants.KEY_FILE) || key.equals(Constants.KEY_PATH) || key.equals(Constants.KEY_ID)) {
                         tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var),
                                 "\" + " + var + " + \""));
                     } else
@@ -185,7 +186,11 @@ class ScenarioConverter {
     }
 
     private static String createSeqVariable(final String varName, final List seq) {
-        return "var " + varName + Constants.SEQ_POSTFIX + " = " + seq.toString() + ";";
+        String newSeq = seq.stream().map(s -> {
+            return (s instanceof String) ? String.format("\"%s\"", s) : s;
+        }).collect(Collectors.toList()).toString();
+        return "var " + varName + Constants.SEQ_POSTFIX + " = " + newSeq + ";";
+
     }
 
     private static String createForStep(final String tab, final String varName, final List seq) {
@@ -197,7 +202,10 @@ class ScenarioConverter {
     private static String createForStep(final String tab, final String varName, final String range) {
         final String startVal = range.split("-")[0];
         final String endVal = range.split("-")[1].split(",")[0];
-        final String step = range.split("-")[1].split(",")[1];
+        if (range.split("-")[1].split(",").length != 1) {
+            final String step = range.split("-")[1].split(",")[1];
+        }
+        final String step = "1";
         return tab + createForLine(varName, startVal, endVal, step);
     }
 
