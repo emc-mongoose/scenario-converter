@@ -187,7 +187,7 @@ class ScenarioConverter {
 
     private static String createSeqVariable(final String varName, final List seq) {
         String newSeq = seq.stream().map(s -> {
-            return (s instanceof String) ? String.format("\"%s\"", s) : s;
+            return (s instanceof String && !oldScenario.getAllVarList().contains(s)) ? String.format("\"%s\"", s) : s;
         }).collect(Collectors.toList()).toString();
         return "var " + varName + Constants.SEQ_POSTFIX + " = " + newSeq + ";";
 
