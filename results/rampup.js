@@ -1,8 +1,8 @@
 
-var size_seq = [0, 1KB, 1MB];
+var size_seq = [0, "1KB", "1MB"];
 for( size in size_seq ){
 
-var superConfig_1 = {
+var parentConfig_1 = {
   "output" : {
     "metrics" : {
       "average" : {
@@ -28,7 +28,7 @@ var superConfig_1 = {
         var threads_seq = [1, 10, 100];
         for( threads in threads_seq ){
 
-        var superConfig_2 = {
+        var parentConfig_2 = {
           "load" : {
             "step" : {
               "limit" : {
@@ -38,63 +38,63 @@ var superConfig_1 = {
           },
           "item" : {
             "output" : {
-              "path" : "size_threadsthreads"
+              "path" : "" + size + "_" + threads + threads
             }
           }
         };
 
-                var step_1 CreateLoad();
-                step_1.config(superConfig_1);
-                step_1.config(superConfig_2);
+                var step_1 = CreateLoad();
+                step_1.config(parentConfig_1);
+                step_1.config(parentConfig_2);
                 step_1.config({
                       "load" : {
                         "type" : "create",
                         "step" : {
-                          "id" : "Cthreads_size"
+                          "id" : "C" + threads + "_" + size + ""
                         }
                       },
                       "item" : {
                         "output" : {
-                          "file" : "size_threadsthreads.csv"
+                          "file" : "" + size + "_" + threads + "threads.csv"
                         }
                       }
                     });
-                step_1.start();
+                step_1.run();
 
-                var step_2 ReadLoad();
-                step_2.config(superConfig_1);
-                step_2.config(superConfig_2);
+                var step_2 = ReadLoad();
+                step_2.config(parentConfig_1);
+                step_2.config(parentConfig_2);
                 step_2.config({
                       "load" : {
                         "type" : "read",
                         "step" : {
-                          "id" : "Rthreads_size"
+                          "id" : "R" + threads + "_" + size + ""
                         }
                       },
                       "item" : {
                         "input" : {
-                          "file" : "size_threadsthreads.csv"
+                          "file" : "" + size + "_" + threads + "threads.csv"
                         }
                       }
                     });
-                step_2.start();
+                step_2.run();
 
-                var step_3 DeleteLoad();
-                step_3.config(superConfig_1);
-                step_3.config(superConfig_2);
+                var step_3 = DeleteLoad();
+                step_3.config(parentConfig_1);
+                step_3.config(parentConfig_2);
                 step_3.config({
                       "load" : {
                         "type" : "delete",
                         "step" : {
-                          "id" : "Dthreads_size"
+                          "id" : "D" + threads + "_" + size + ""
                         }
                       },
                       "item" : {
                         "input" : {
-                          "file" : "size_threadsthreads.csv"
+                          "file" : "" + size + "_" + threads + "threads.csv"
                         }
                       }
                     });
-                step_3.start();
+                step_3.run();
         };
 };

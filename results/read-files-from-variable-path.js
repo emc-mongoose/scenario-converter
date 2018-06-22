@@ -1,5 +1,5 @@
 
-var superConfig_1 = {
+var parentConfig_1 = {
   "item" : {
     "data" : {
       "size" : "10KB"
@@ -20,7 +20,7 @@ var superConfig_1 = {
 };
 
         var step_1 = PreconditionLoad();
-        step_1.config(superConfig_1);
+        step_1.config(parentConfig_1);
         step_1.config({
               "item" : {
                 "output" : {
@@ -29,10 +29,10 @@ var superConfig_1 = {
                 }
               }
             });
-        step_1.start();
+        step_1.run();
 
-        var step_2 = Load();
-        step_2.config(superConfig_1);
+        var step_2 = ReadLoad();
+        step_2.config(parentConfig_1);
         step_2.config({
               "load" : {
                 "type" : "read"
@@ -43,4 +43,4 @@ var superConfig_1 = {
                 }
               }
             });
-        step_2.start();
+        step_2.run();

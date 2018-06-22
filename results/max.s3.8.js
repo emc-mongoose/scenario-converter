@@ -1,5 +1,5 @@
 
-var superConfig_1 = {
+var parentConfig_1 = {
   "storage" : {
     "net" : {
       "node" : {
@@ -13,7 +13,7 @@ var superConfig_1 = {
 };
 
         var step_1 = PreconditionLoad();
-        step_1.config(superConfig_1);
+        step_1.config(parentConfig_1);
         step_1.config({
               "load" : {
                 "step" : {
@@ -27,15 +27,15 @@ var superConfig_1 = {
                   "size" : "10KB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/init.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/init.csv"
                 }
               }
             });
-        step_1.start();
+        step_1.run();
 
         var step_2 = PreconditionLoad();
-        step_2.config(superConfig_1);
+        step_2.config(parentConfig_1);
         step_2.config({
               "load" : {
                 "generator" : {
@@ -55,19 +55,19 @@ var superConfig_1 = {
                   "size" : "10KB"
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/init.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/init.csv"
                 }
               }
             });
-        step_2.start();
+        step_2.run();
 
         var cmd_1 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_3 CreateLoad();
-        step_3.config(superConfig_1);
+        var step_3 = CreateLoad();
+        step_3.config(parentConfig_1);
         step_3.config({
               "load" : {
                 "step" : {
@@ -82,19 +82,19 @@ var superConfig_1 = {
                   "size" : "10KB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W10KB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W10KB/items.csv"
                 }
               }
             });
-        step_3.start();
+        step_3.run();
 
         var cmd_2 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_4 CreateLoad();
-        step_4.config(superConfig_1);
+        var step_4 = CreateLoad();
+        step_4.config(parentConfig_1);
         step_4.config({
               "load" : {
                 "step" : {
@@ -109,19 +109,19 @@ var superConfig_1 = {
                   "size" : "100KB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W100KB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W100KB/items.csv"
                 }
               }
             });
-        step_4.start();
+        step_4.run();
 
         var cmd_3 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_5 CreateLoad();
-        step_5.config(superConfig_1);
+        var step_5 = CreateLoad();
+        step_5.config(parentConfig_1);
         step_5.config({
               "load" : {
                 "step" : {
@@ -136,19 +136,19 @@ var superConfig_1 = {
                   "size" : "1MB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W1MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W1MB/items.csv"
                 }
               }
             });
-        step_5.start();
+        step_5.run();
 
         var cmd_4 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_6 CreateLoad();
-        step_6.config(superConfig_1);
+        var step_6 = CreateLoad();
+        step_6.config(parentConfig_1);
         step_6.config({
               "load" : {
                 "step" : {
@@ -163,19 +163,19 @@ var superConfig_1 = {
                   "size" : "10MB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W10MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W10MB/items.csv"
                 }
               }
             });
-        step_6.start();
+        step_6.run();
 
         var cmd_5 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_7 CreateLoad();
-        step_7.config(superConfig_1);
+        var step_7 = CreateLoad();
+        step_7.config(parentConfig_1);
         step_7.config({
               "load" : {
                 "step" : {
@@ -190,19 +190,19 @@ var superConfig_1 = {
                   "size" : "100MB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W100MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W100MB/items.csv"
                 }
               }
             });
-        step_7.start();
+        step_7.run();
 
         var cmd_6 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_8 CreateLoad();
-        step_8.config(superConfig_1);
+        var step_8 = CreateLoad();
+        step_8.config(parentConfig_1);
         step_8.config({
               "load" : {
                 "step" : {
@@ -217,19 +217,19 @@ var superConfig_1 = {
                   "size" : "200MB"
                 },
                 "output" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W200MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W200MB/items.csv"
                 }
               }
             });
-        step_8.start();
+        step_8.run();
 
         var cmd_7 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_9 ReadLoad();
-        step_9.config(superConfig_1);
+        var step_9 = ReadLoad();
+        step_9.config(parentConfig_1);
         step_9.config({
               "load" : {
                 "generator" : {
@@ -251,19 +251,19 @@ var superConfig_1 = {
                   "verify" : true
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W10KB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W10KB/items.csv"
                 }
               }
             });
-        step_9.start();
+        step_9.run();
 
         var cmd_8 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_10 ReadLoad();
-        step_10.config(superConfig_1);
+        var step_10 = ReadLoad();
+        step_10.config(parentConfig_1);
         step_10.config({
               "load" : {
                 "generator" : {
@@ -285,19 +285,19 @@ var superConfig_1 = {
                   "verify" : true
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W100KB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W100KB/items.csv"
                 }
               }
             });
-        step_10.start();
+        step_10.run();
 
         var cmd_9 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_11 ReadLoad();
-        step_11.config(superConfig_1);
+        var step_11 = ReadLoad();
+        step_11.config(parentConfig_1);
         step_11.config({
               "load" : {
                 "generator" : {
@@ -319,19 +319,19 @@ var superConfig_1 = {
                   "verify" : true
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W1MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W1MB/items.csv"
                 }
               }
             });
-        step_11.start();
+        step_11.run();
 
         var cmd_10 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_12 ReadLoad();
-        step_12.config(superConfig_1);
+        var step_12 = ReadLoad();
+        step_12.config(parentConfig_1);
         step_12.config({
               "load" : {
                 "generator" : {
@@ -353,19 +353,19 @@ var superConfig_1 = {
                   "verify" : true
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W10MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W10MB/items.csv"
                 }
               }
             });
-        step_12.start();
+        step_12.run();
 
         var cmd_11 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_13 ReadLoad();
-        step_13.config(superConfig_1);
+        var step_13 = ReadLoad();
+        step_13.config(parentConfig_1);
         step_13.config({
               "load" : {
                 "generator" : {
@@ -387,19 +387,19 @@ var superConfig_1 = {
                   "verify" : true
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W100MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W100MB/items.csv"
                 }
               }
             });
-        step_13.start();
+        step_13.run();
 
         var cmd_12 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
 
-        var step_14 ReadLoad();
-        step_14.config(superConfig_1);
+        var step_14 = ReadLoad();
+        step_14.config(parentConfig_1);
         step_14.config({
               "load" : {
                 "generator" : {
@@ -421,13 +421,13 @@ var superConfig_1 = {
                   "verify" : true
                 },
                 "input" : {
-                  "path" : BUCKET,
-                  "file" : "MONGOOSE_DIR/log/MAX-W200MB/items.csv"
+                  "path" : "" + BUCKET + "",
+                  "file" : "" + MONGOOSE_DIR + "/log/MAX-W200MB/items.csv"
                 }
               }
             });
-        step_14.start();
+        step_14.run();
 
         var cmd_13 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "sleep ${WAIT_TIME}")
-            .start();
+            .run();
