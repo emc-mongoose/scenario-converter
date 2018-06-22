@@ -7,6 +7,5 @@ public class Main {
         for (String arg : args) {
             ScenarioConverter.print(new Scenario(Scenario.parseJson(Paths.get(arg).toFile())));
         }
-        ScenarioConverter.print(new Scenario(Scenario.parseJson(Paths.get("example", "scenario", "json", "misc", "rampup.json").toFile())));
     }
 }
