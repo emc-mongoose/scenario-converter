@@ -1,5 +1,8 @@
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -171,7 +174,8 @@ class ScenarioConverter {
         for (String var : oldScenario.getLoopVarList()) {
             newCmdLine = newCmdLine.replaceAll(String.format(Constants.VAR_PATTERN, var), "\" + " + var + " + \"");
         }
-        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.incrementAndGet(), tab, "\"" + newCmdLine + "\"", tab);
+        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.incrementAndGet(), tab, "\"" + newCmdLine + "\"", tab) +
+                "\n" + tab + "cmd_" + cmdCounter + ".waitFor()";
     }
 
     private static String createParallelSteps(final String tab, final int stepCount) {

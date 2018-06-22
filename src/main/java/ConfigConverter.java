@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,7 +6,6 @@ import com.github.akurilov.commons.collection.TreeUtil;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 public class ConfigConverter {
 
@@ -51,45 +49,36 @@ public class ConfigConverter {
         for (String key : tree.keySet()) {
             switch (key) {
                 case Constants.KEY_LOAD:
-                case Constants.KEY_STORAGE: {
+                case Constants.KEY_STORAGE:
+                case Constants.KEY_STEP: {
                     convert((Map<String, Object>) tree.get(key), newTree);
-                }
-                break;
-                case Constants.KEY_LIMIT: {
-                    final Map map = new HashMap<String, Object>();
-                    map.put(Constants.KEY_LIMIT, tree.get(key));
-                    addToLoadStepSection(map, newTree);
-                    deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_LIMIT)));
-                    //newTree.remove(KEY_LIMIT);
                 }
                 break;
                 case Constants.KEY_TEST: {
                     convert((Map<String, Object>) tree.get(key), newTree);
                     deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_TEST)));
-                    //newTree.remove(KEY_TEST);
                 }
                 break;
-                case Constants.KEY_STEP: {
-                    addToLoadStepSection(tree.get(key), newTree);
-                    //deepRemove(newTree, Arrays.asList(KEY_TEST, KEY_STEP));
-                    //newTree.remove(KEY_STEP);
+                case Constants.KEY_LIMIT: {
+                    addToSection((HashMap<String, Object>) tree.get(key), newTree,
+                            new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP, Constants.KEY_LIMIT)));
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_LIMIT)));
                 }
                 break;
                 case Constants.KEY_SCENARIO: {
-                    addToRunSection(tree.get(key), newTree);
-                    //deepRemove(newTree, Arrays.asList(KEY_TEST, KEY_SCENARIO));
-                    //newTree.remove(KEY_SCENARIO);
+                    addToSection((Map<String, Object>) tree.get(key), newTree,
+                            new ArrayList<>(Arrays.asList(Constants.KEY_RUN, Constants.KEY_SCENARIO)));
                 }
                 break;
                 case Constants.KEY_RUN: {
-                    addToLoadStepSection(tree.get(key), newTree);
+                    addToSection((Map<String, Object>) tree.get(key), newTree,
+                            new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP)));
                     deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_RUN)));
                 }
                 break;
                 case Constants.KEY_NODE: {
-                    final Map map = new HashMap<String, Object>();
-                    map.put(Constants.KEY_NODE, tree.get(key));
-                    addToStorageNetSection(map, newTree);
+                    addToSection((Map<String, Object>) tree.get(key), newTree,
+                            new ArrayList<>(Arrays.asList(Constants.KEY_STORAGE, Constants.KEY_NET, Constants.KEY_NODE)));
                     deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_STORAGE, Constants.KEY_NODE)));
                 }
                 break;
@@ -97,16 +86,15 @@ public class ConfigConverter {
         }
     }
 
-    private static void addToStorageNetSection(final Object o, final Map<String, Object> newTree) {
-        if (!((Map<String, Object>) newTree.get(Constants.KEY_STORAGE)).containsKey(Constants.KEY_NET)) {
-            ((Map<String, Object>) newTree
-                    .get(Constants.KEY_STORAGE))
-                    .put(Constants.KEY_NET, o);
+    private static void addToSection(final Map o, final Map<String, Object> newTree, final List<String> keys) {
+        if (!newTree.containsKey(keys.get(0))) {
+            newTree.put(keys.get(0), new HashMap<String, Object>());
+        }
+        if (keys.size() == 1) {
+            ((Map<String, Object>) newTree.get(keys.get(0))).putAll(o);
         } else {
-            ((Map<String, Object>) ((Map<String, Object>) newTree
-                    .get(Constants.KEY_STORAGE))
-                    .get(Constants.KEY_NET))
-                    .putAll((HashMap<String, Object>) o);
+            final String key = keys.remove(0);
+            addToSection(o, (Map<String, Object>) newTree.get(key), keys);
         }
     }
 
@@ -116,30 +104,6 @@ public class ConfigConverter {
         else {
             final String key = keys.remove(0);
             deepRemove((Map<String, Object>) tree.get(key), keys);
-        }
-    }
-
-    private static void addToRunSection(final Object o, final Map<String, Object> newTree) {
-        if (!newTree.containsKey(Constants.KEY_RUN)) {
-            newTree.put(Constants.KEY_RUN, new HashMap<>());
-        }
-        ((Map<String, Object>) newTree.get(Constants.KEY_RUN)).put(Constants.KEY_SCENARIO, o);
-    }
-
-    private static void addToLoadStepSection(final Object o, final Map<String, Object> newTree) {
-        if (!newTree.containsKey(Constants.KEY_LOAD)) {
-            final Map<String, Object> branch = new HashMap<>();
-            branch.put(Constants.KEY_STEP, o);
-            newTree.put(Constants.KEY_LOAD, branch);
-        } else if (!((Map<String, Object>) newTree.get(Constants.KEY_LOAD)).containsKey(Constants.KEY_STEP)) {
-            ((Map<String, Object>) newTree
-                    .get(Constants.KEY_LOAD))
-                    .put(Constants.KEY_STEP, o);
-        } else {
-            ((Map<String, Object>) ((Map<String, Object>) newTree
-                    .get(Constants.KEY_LOAD))
-                    .get(Constants.KEY_STEP))
-                    .putAll((HashMap<String, Object>) o);
         }
     }
 
