@@ -32,6 +32,10 @@ public class ConfigConverter {
         return newConfig;
     }
 
+    private static String replaceArrays(final String str) {
+        return str.replaceAll("\\[", "new java.util.ArrayList([").replaceAll("\\]", "])");
+    }
+
     public static String pullLoadType(final Map<String, Object> config) {
         if (((Map<String, Object>) config).containsKey(Constants.KEY_LOAD) &&
                 ((Map<String, Object>) ((Map<String, Object>) config).get(Constants.KEY_LOAD)).containsKey(Constants.KEY_TYPE))
@@ -50,13 +54,30 @@ public class ConfigConverter {
             switch (key) {
                 case Constants.KEY_LOAD:
                 case Constants.KEY_STORAGE:
-                case Constants.KEY_STEP: {
+                case Constants.KEY_STEP:
+                case Constants.KEY_AUTH: {
                     convert((Map<String, Object>) tree.get(key), newTree);
+                }
+                break;
+                case Constants.KEY_ID: {
+                    final Map<String, Object> uid = new HashMap<>();
+                    uid.put(Constants.KEY_UID, tree.get(key));
+                    addToSection(uid, newTree,
+                            new ArrayList<>(Arrays.asList(Constants.KEY_STORAGE, Constants.KEY_AUTH)));
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_STORAGE, Constants.KEY_AUTH, Constants.KEY_ID)));
                 }
                 break;
                 case Constants.KEY_TEST: {
                     convert((Map<String, Object>) tree.get(key), newTree);
                     deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_TEST)));
+                }
+                break;
+                case Constants.KEY_THREADS: {
+                    final Map<String, Object> conc = new HashMap<>();
+                    conc.put(Constants.KEY_CONCURRENCY, tree.get(key));
+                    addToSection(conc, newTree,
+                            new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP, Constants.KEY_LIMIT)));
+                    deepRemove(newTree, new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_THREADS)));
                 }
                 break;
                 case Constants.KEY_LIMIT: {
@@ -108,13 +129,17 @@ public class ConfigConverter {
     }
 
     public static String convertConfigAndToJson(final Map<String, Object> oldConfig) {
+        return mapToStr(convertConfig(oldConfig));
+    }
+
+    public static String mapToStr(final Map<String, Object> map) {
         String str = null;
         try {
             str = new ObjectMapper()
                     .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(convertConfig(oldConfig))
+                    .writeValueAsString(map)
                     .replaceAll("\\\\\"", "\"");
-
+            str = replaceArrays(str);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

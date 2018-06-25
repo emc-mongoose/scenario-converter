@@ -21,6 +21,7 @@ class ScenarioConverter {
         final Map<String, Object> tree = oldScenario.getStepTree();
         replaceVariables(tree);
         //replaceJobsOnSteps(tree);
+        System.out.print(Constants.PRINT_FUNCTION + "\n");
         print("", tree, false, new ArrayList<>());
     }
 
@@ -142,8 +143,11 @@ class ScenarioConverter {
                     if (key.equals(Constants.KEY_FILE) || key.equals(Constants.KEY_PATH) || key.equals(Constants.KEY_ID)) {
                         tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var),
                                 "\" + " + var + " + \""));
-                    } else
+                        tree.replace(key, ((String) tree.get(key)).replaceAll(var,
+                                "\"" + var + "\""));
+                    } else {
                         tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var), var));
+                    }
                 }
             } else replaceVariables(tree.get(key));
         }
@@ -174,8 +178,10 @@ class ScenarioConverter {
         for (String var : oldScenario.getLoopVarList()) {
             newCmdLine = newCmdLine.replaceAll(String.format(Constants.VAR_PATTERN, var), "\" + " + var + " + \"");
         }
-        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.incrementAndGet(), tab, "\"" + newCmdLine + "\"", tab) +
-                "\n" + tab + "cmd_" + cmdCounter + ".waitFor();";
+        final String varName = "cmd_" + cmdCounter.incrementAndGet();
+        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.get(), tab, "\"" + newCmdLine + "\"", tab) +
+                "\n" + tab + varName + ".waitFor();\n"
+                + tab + String.format(Constants.PRINT_FUNCTION_FORMAT, varName);
     }
 
     private static String createParallelSteps(final String tab, final int stepCount) {
@@ -233,52 +239,61 @@ class ScenarioConverter {
         //TODO: verifyLoad, precondition, mixed ... and others
         switch (type) {
             case Constants.KEY_CREATE: {
-                str += "var " + varName + " = CreateLoad();\n";
+                str += "var " + varName + " = CreateLoad\n";
             }
             break;
             case Constants.KEY_READ: {
-                str += "var " + varName + " = ReadLoad();\n";
+                str += "var " + varName + " = ReadLoad\n";
             }
             break;
             case Constants.KEY_UPDATE: {
-                str += "var " + varName + " = UpdateLoad();\n";
+                str += "var " + varName + " = UpdateLoad\n";
             }
             break;
             case Constants.KEY_DELETE: {
-                str += "var " + varName + " = DeleteLoad();\n";
+                str += "var " + varName + " = DeleteLoad\n";
             }
             break;
             default: {
-                str += "var " + varName + " = Load();\n";
+                str += "var " + varName + " = Load\n";
             }
         }
         for (String configName : parentConfig) {
-            str += tab + varName + ".config(" + configName + ");\n";
+            str += tab + ".config(" + configName + ")\n";
         }
         if (config != null)
-            str += tab + varName + ".config(" + convertConfig(tab + Constants.TAB, config) + ");\n";
-        str += tab + varName + ".run();";
+            str += tab + ".config(" + convertConfig(tab + Constants.TAB, config) + ")\n";
+        str += tab + ".run();";
         return str;
     }
 
     private static String createPrecondStep(final String tab, final Map<String, Object> config, final List<String> parentConfig) {
         final String varName = "step_" + (stepCounter.incrementAndGet());
-        String str = tab + "var " + varName + " = PreconditionLoad();\n";
+        String str = tab + "var " + varName + " = PreconditionLoad\n";
         for (String configName : parentConfig) {
-            str += tab + varName + ".config(" + configName + ");\n";
+            str += tab + ".config(" + configName + ")\n";
         }
         if (config != null)
-            str += tab + varName + ".config(" + convertConfig(tab + Constants.TAB, config) + ");\n";
-        str += tab + varName + ".run();";
+            str += tab + ".config(" + convertConfig(tab + Constants.TAB, config) + ")\n";
+        str += tab + ".run();";
         return str;
     }
 
     private static String convertConfig(final String tab, final Map map) {
         String str = ConfigConverter.convertConfigAndToJson(map);
         str = str.replaceAll("\\n", "\n" + tab);
-        for (String var : oldScenario.getAllVarList()) {
-            str = str.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
-        }
+//        for (String var : oldScenario.getAllVarList()) {
+//            str = str.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
+//        }
+        str = removeQuotes(str);
         return str;
+    }
+
+    private static String removeQuotes(final String str) {
+        String tmp = str;
+        for (String var : oldScenario.getAllVarList()) {
+            tmp = tmp.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
+        }
+        return tmp;
     }
 }
