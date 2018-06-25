@@ -1,16 +1,28 @@
+function printToCL(cmd) {
+    var cmdStdOut = new java.io.BufferedReader(
+            new java.io.InputStreamReader(cmd.getInputStream())
+    );
+    cmd.waitFor();
+    while(null != (nextLine = cmdStdOut.readLine())) {
+            print(nextLine);
+    }
+    cmdStdOut.close();
+}
 
         var cmd_1 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "rm $ITEM_INPUT_FILE")
             .start();
         cmd_1.waitFor();
+        printToCL( cmd_1 );
 
         var cmd_2 = new java.lang.ProcessBuilder()
             .command("sh", "-c", "export ITEM_INPUT_FILE=10K_items.csv")
             .start();
         cmd_2.waitFor();
+        printToCL( cmd_2 );
 
-        var step_1 = PreconditionLoad();
-        step_1.config({
+        var step_1 = PreconditionLoad
+        .config({
               "load" : {
                 "step" : {
                   "limit" : {
@@ -23,13 +35,13 @@
                   "file" : "" + ITEM_INPUT_FILE + ""
                 }
               }
-            });
-        step_1.run();
+            })
+        .run();
 
         function func1() {
 
-            var step_2 = ReadLoad();
-            step_2.config({
+            var step_2 = ReadLoad
+            .config({
                   "load" : {
                     "type" : "read",
                     "generator" : {
@@ -43,35 +55,37 @@
                       "file" : "" + ITEM_INPUT_FILE + ""
                     }
                   }
-                });
-            step_2.run();
+                })
+            .run();
         };
 
         function func2() {
 
             var itemSize_seq = ["10KB", "1MB", "100MB"];
-            for( itemSize in itemSize_seq ){
+            for each ( itemSize in itemSize_seq ){
 
                     var cmd_3 = new java.lang.ProcessBuilder()
                         .command("sh", "-c", "echo " + itemSize + "")
                         .start();
                     cmd_3.waitFor();
+                    printToCL( cmd_3 );
 
-                    var concurrencyLimit_seq = [1, 10, itemSize];
-                    for( concurrencyLimit in concurrencyLimit_seq ){
+                    var concurrencyLimit_seq = [1, 10, 100];
+                    for each ( concurrencyLimit in concurrencyLimit_seq ){
 
                             var cmd_4 = new java.lang.ProcessBuilder()
-                                .command("sh", "-c", "echo " + concurrencyLimit + "; echo test")
+                                .command("sh", "-c", "echo " + concurrencyLimit + "")
                                 .start();
                             cmd_4.waitFor();
+                            printToCL( cmd_4 );
 
-                            var step_3 = CreateLoad();
-                            step_3.config({
+                            var step_3 = CreateLoad
+                            .config({
                                   "load" : {
                                     "step" : {
                                       "limit" : {
                                         "concurrency" : concurrencyLimit,
-                                        "time" : "1m"
+                                        "time" : "20s"
                                       }
                                     }
                                   },
@@ -80,20 +94,8 @@
                                       "size" : itemSize
                                     }
                                   }
-                                });
-                            step_3.run();
-                    };
-
-                    for( var i1 = 0; i1 < 10; i1 += 1 ){
-                    };
-
-                    while( true ){
-                    };
-
-                    for( var rangeLoopValue = 1.55; rangeLoopValue < 3.48; rangeLoopValue += 1 ){
-                    };
-
-                    for( var rangeLoopValue = 1.55; rangeLoopValue < itemSize; rangeLoopValue += 1 ){
+                                })
+                            .run();
                     };
             };
         };

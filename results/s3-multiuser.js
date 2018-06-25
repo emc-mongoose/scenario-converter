@@ -1,12 +1,22 @@
+function printToCL(cmd) {
+    var cmdStdOut = new java.io.BufferedReader(
+            new java.io.InputStreamReader(cmd.getInputStream())
+    );
+    cmd.waitFor();
+    while(null != (nextLine = cmdStdOut.readLine())) {
+            print(nextLine);
+    }
+    cmdStdOut.close();
+}
 
-var step_1 = CreateLoad();
-step_1.config({
+var step_1 = CreateLoad
+.config({
       "item" : {
         "data" : {
           "size" : "10KB"
         },
         "output" : {
-          "path" : "bucket-%d(314159265){00}[0-99]",
+          "path" : "bucket-%d(314159265){00}new java.util.ArrayList([0-99])",
           "file" : "objects.csv"
         }
       },
@@ -15,7 +25,7 @@ step_1.config({
           "type" : "s3"
         },
         "auth" : {
-          "uid" : "user-%d(314159265){00}[0-99]",
+          "uid" : "user-%d(314159265){00}new java.util.ArrayList([0-99])",
           "file" : "credentials.csv"
         }
       },
@@ -27,5 +37,5 @@ step_1.config({
           }
         }
       }
-    });
-step_1.run();
+    })
+.run();

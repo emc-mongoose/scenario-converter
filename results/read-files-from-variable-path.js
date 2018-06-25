@@ -1,3 +1,13 @@
+function printToCL(cmd) {
+    var cmdStdOut = new java.io.BufferedReader(
+            new java.io.InputStreamReader(cmd.getInputStream())
+    );
+    cmd.waitFor();
+    while(null != (nextLine = cmdStdOut.readLine())) {
+            print(nextLine);
+    }
+    cmdStdOut.close();
+}
 
 var parentConfig_1 = {
   "item" : {
@@ -20,21 +30,21 @@ var parentConfig_1 = {
   }
 };
 
-        var step_1 = PreconditionLoad();
-        step_1.config(parentConfig_1);
-        step_1.config({
+        var step_1 = PreconditionLoad
+        .config(parentConfig_1)
+        .config({
               "item" : {
                 "output" : {
                   "path" : "/var/tmp/read-files-from-variable-path/%p{16;2}",
                   "file" : "read-files-from-variable-path.csv"
                 }
               }
-            });
-        step_1.run();
+            })
+        .run();
 
-        var step_2 = ReadLoad();
-        step_2.config(parentConfig_1);
-        step_2.config({
+        var step_2 = ReadLoad
+        .config(parentConfig_1)
+        .config({
               "load" : {
                 "type" : "read"
               },
@@ -43,5 +53,5 @@ var parentConfig_1 = {
                   "file" : "read-files-from-variable-path.csv"
                 }
               }
-            });
-        step_2.run();
+            })
+        .run();

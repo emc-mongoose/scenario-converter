@@ -1,6 +1,16 @@
+function printToCL(cmd) {
+    var cmdStdOut = new java.io.BufferedReader(
+            new java.io.InputStreamReader(cmd.getInputStream())
+    );
+    cmd.waitFor();
+    while(null != (nextLine = cmdStdOut.readLine())) {
+            print(nextLine);
+    }
+    cmdStdOut.close();
+}
 
 var size_seq = [0, "1KB", "1MB"];
-for( size in size_seq ){
+for each ( size in size_seq ){
 
 var parentConfig_1 = {
   "output" : {
@@ -12,7 +22,7 @@ var parentConfig_1 = {
   },
   "item" : {
     "data" : {
-      size : size
+      "size" : size
     }
   },
   "load" : {
@@ -26,7 +36,7 @@ var parentConfig_1 = {
 };
 
         var threads_seq = [1, 10, 100];
-        for( threads in threads_seq ){
+        for each ( threads in threads_seq ){
 
         var parentConfig_2 = {
           "load" : {
@@ -38,54 +48,69 @@ var parentConfig_1 = {
           },
           "item" : {
             "output" : {
-              "path" : "" + size + "_" + threads + threads
+              "path" : "" + size + "_" + threads + "threads"
             }
           }
         };
 
-                var step_1 = CreateLoad();
-                step_1.config(parentConfig_1);
-                step_1.config(parentConfig_2);
-                step_1.config({
-                      "load" : {
-                        "type" : "create"
-                      },
+                var step_1 = CreateLoad
+                .config(parentConfig_1)
+                .config(parentConfig_2)
+                .config({
                       "item" : {
                         "output" : {
                           "file" : "" + size + "_" + threads + "threads.csv"
                         }
+                      },
+                      "storage" : {
+                        "auth" : {
+                          "uid" : "C" + threads + "_" + size + ""
+                        }
+                      },
+                      "load" : {
+                        "type" : "create"
                       }
-                    });
-                step_1.run();
+                    })
+                .run();
 
-                var step_2 = ReadLoad();
-                step_2.config(parentConfig_1);
-                step_2.config(parentConfig_2);
-                step_2.config({
+                var step_2 = ReadLoad
+                .config(parentConfig_1)
+                .config(parentConfig_2)
+                .config({
+                      "item" : {
+                        "input" : {
+                          "file" : "" + size + "_" + threads + "threads.csv"
+                        }
+                      },
+                      "storage" : {
+                        "auth" : {
+                          "uid" : "R" + threads + "_" + size + ""
+                        }
+                      },
                       "load" : {
                         "type" : "read"
-                      },
+                      }
+                    })
+                .run();
+
+                var step_3 = DeleteLoad
+                .config(parentConfig_1)
+                .config(parentConfig_2)
+                .config({
                       "item" : {
                         "input" : {
                           "file" : "" + size + "_" + threads + "threads.csv"
                         }
-                      }
-                    });
-                step_2.run();
-
-                var step_3 = DeleteLoad();
-                step_3.config(parentConfig_1);
-                step_3.config(parentConfig_2);
-                step_3.config({
+                      },
+                      "storage" : {
+                        "auth" : {
+                          "uid" : "D" + threads + "_" + size + ""
+                        }
+                      },
                       "load" : {
                         "type" : "delete"
-                      },
-                      "item" : {
-                        "input" : {
-                          "file" : "" + size + "_" + threads + "threads.csv"
-                        }
                       }
-                    });
-                step_3.run();
+                    })
+                .run();
         };
 };
