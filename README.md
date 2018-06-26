@@ -8,6 +8,18 @@ How to use it
 ## Design
 How it does the things, list of the params for the conversion, etc
 ## Development
-How to build, test and deploy it
+In order to build project, go to the 'converter' directory and type:
+```bash
+./gradlew makeJar
+```
+Jar-file will have path '/converter/build/libs/converter-<version>.jar'.
+For converting one scenario type:
+```bash
+java -jar <path to jar-file> <path to json-scenario>
+```
+or for multiply converting:
+  ```bash
+java -jar <path to jar-file> <path 1> <path 2> ... <path n>
+```
 ## Links
 [Mongoose](https://github.com/emc-mongoose/mongoose)
