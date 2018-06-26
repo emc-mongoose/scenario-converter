@@ -8,7 +8,7 @@ How it does the things, list of the params for the conversion, etc
 ```bash
 ./gradlew makeJar
 ```
-Jar-file will have path '/converter/build/libs/converter-<version>.jar'.
+Jar-file will have path '/converter/build/libs/converter-\<version\>.jar'.
 ## Usage
   For converting one scenario type:
 ```bash
