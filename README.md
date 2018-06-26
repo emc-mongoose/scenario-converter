@@ -14,7 +14,7 @@ Jar-file will have path '/converter/build/libs/converter-\<version\>.jar'.
 ```bash
 java -jar <path to jar-file> <path to json-scenario>
 ```
-or for multiply converting:
+or for multiple converting:
 ```bash
 java -jar <path to jar-file> <path 1> <path 2> ... <path n>
 ```
