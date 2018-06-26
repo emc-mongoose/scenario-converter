@@ -20,7 +20,7 @@ java -jar <path to jar-file> <path 1> <path 2> ... <path n>
 ```
   Result will be print into std-output. To create .js file use the following:
 ```bash
-java -jar <path to jar-file> <path to json-scenario>.json > <path to JS-scenario>.js
+java -jar <path to jar-file> <path to json-scenario>  >  <path to JS-scenario>
 ```  
 ## Contributors
 [Veronika Kochugova](https://github.com/veronikaKochugova)
