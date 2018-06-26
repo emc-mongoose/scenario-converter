@@ -21,7 +21,6 @@ class ScenarioConverter {
         final Map<String, Object> tree = oldScenario.getStepTree();
         replaceVariables(tree);
         //replaceJobsOnSteps(tree);
-        System.out.print(Constants.PRINT_FUNCTION + "\n");
         print("", tree, false, new ArrayList<>());
     }
 
@@ -39,7 +38,7 @@ class ScenarioConverter {
                 }
                 break;
                 case Constants.STEP_TYPE_SEQ: {
-                    createAndPrintparentConfig(tab, tree, parentConfig);
+                    createAndPrintParentConfig(tab, tree, parentConfig);
                     if (tree.containsKey(Constants.KEY_STEPS)) {
                         print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
                     } else {
@@ -50,7 +49,7 @@ class ScenarioConverter {
                 }
                 break;
                 case Constants.STEP_TYPE_PARALLEL: {
-                    createAndPrintparentConfig(tab, tree, parentConfig);
+                    createAndPrintParentConfig(tab, tree, parentConfig);
                     String key_steps = null;
                     if (tree.containsKey(Constants.KEY_STEPS)) {
                         key_steps = Constants.KEY_STEPS;
@@ -87,7 +86,7 @@ class ScenarioConverter {
                         str = createForStep(tab);
 
                     System.out.print("\n" + str + "\n");
-                    createAndPrintparentConfig(tab, tree, parentConfig);
+                    createAndPrintParentConfig(tab, tree, parentConfig);
                     if (tree.containsKey(Constants.KEY_STEPS)) {
                         print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
                     } else {
@@ -109,16 +108,16 @@ class ScenarioConverter {
         }
     }
 
-    private static void createAndPrintparentConfig(final String tab, final Object tree, final List parentConfig) {
+    private static void createAndPrintParentConfig(final String tab, final Object tree, final List parentConfig) {
         if (!((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG)) return;
         final Object config = ((Map<String, Object>) tree).get(Constants.KEY_CONFIG);
-        final String str = createparentConfig(tab, (Map<String, Object>) config);
+        final String str = createParentConfig(tab, (Map<String, Object>) config);
         parentConfig.add("parentConfig_" + parentConfigCounter);
         System.out.print("\n" + str + "\n");
 
     }
 
-    private static String createparentConfig(final String tab, final Map<String, Object> config) {
+    private static String createParentConfig(final String tab, final Map<String, Object> config) {
         return tab + "var parentConfig_" + parentConfigCounter.incrementAndGet() + " = " +
                 convertConfig(tab, config) + ";";
     }
@@ -175,13 +174,13 @@ class ScenarioConverter {
 
     private static String createCommandStep(final String tab, final String cmdLine) {
         String newCmdLine = cmdLine;
+        newCmdLine = newCmdLine.replaceAll("\\\"", "'");
         for (String var : oldScenario.getLoopVarList()) {
             newCmdLine = newCmdLine.replaceAll(String.format(Constants.VAR_PATTERN, var), "\" + " + var + " + \"");
         }
         final String varName = "cmd_" + cmdCounter.incrementAndGet();
-        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.get(), tab, "\"" + newCmdLine + "\"", tab) +
-                "\n" + tab + varName + ".waitFor();\n"
-                + tab + String.format(Constants.PRINT_FUNCTION_FORMAT, varName);
+        return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.get(), tab, "\"" + newCmdLine + "\"", tab, tab) +
+                "\n" + tab + varName + ".waitFor();\n";
     }
 
     private static String createParallelSteps(final String tab, final int stepCount) {
