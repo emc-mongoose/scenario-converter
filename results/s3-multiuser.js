@@ -1,16 +1,5 @@
-function printToCL(cmd) {
-    var cmdStdOut = new java.io.BufferedReader(
-            new java.io.InputStreamReader(cmd.getInputStream())
-    );
-    cmd.waitFor();
-    while(null != (nextLine = cmdStdOut.readLine())) {
-            print(nextLine);
-    }
-    cmdStdOut.close();
-}
-
 var step_1 = CreateLoad
-.config({
+    .config({
       "item" : {
         "data" : {
           "size" : "10KB"
@@ -38,4 +27,5 @@ var step_1 = CreateLoad
         }
       }
     })
-.run();
+    .run();
+
