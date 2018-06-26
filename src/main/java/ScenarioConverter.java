@@ -115,7 +115,8 @@ class ScenarioConverter {
     private static String createWeightedLoad(final String tab, final Map<String, Object> tree, final List<String> parentConfig) {
         final List<Map<String, Object>> configs = (List) tree.get(Constants.KEY_CONFIG);
         final List weights = (List) tree.get(Constants.KEY_WEIGHTS);
-        if (weights == null) System.err.println("< ERROR: This scenario can't be converted : Mixed Load must have weights >");
+        if (weights == null)
+            System.err.println("< ERROR: This scenario can't be converted : Mixed Load must have weights >");
         String str = tab + "WeightedLoad\n";
         for (String configName : parentConfig) {
             str += tab + Constants.TAB + ".config(" + configName + ") //parent\n";
