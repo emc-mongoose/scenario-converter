@@ -1,6 +1,6 @@
 # scenario-converter
 ## Overview
-This tool converts the Json-scenarios used in the Mongoose 3.*v into new JavaScript-scenarios.
+This tool converts the [Json-scenarios](https://github.com/emc-mongoose/mongoose/wiki/v3.6-Scenarios) used in the Mongoose v3.* into new [JavaScript-scenarios](https://github.com/emc-mongoose/mongoose/blob/feature-v4-doc/doc/input/scenarios.md).
 ## Usage
 How to use it
 ## Contributors
@@ -10,4 +10,4 @@ How it does the things, list of the params for the conversion, etc
 ## Development
 How to build, test and deploy it
 ## Links
-Link to mongoose project, docker image, etc
+[Mongoose](https://github.com/emc-mongoose/mongoose)
