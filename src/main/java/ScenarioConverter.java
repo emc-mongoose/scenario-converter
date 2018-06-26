@@ -20,15 +20,23 @@ class ScenarioConverter {
         oldScenario = scenario;
         final Map<String, Object> tree = oldScenario.getStepTree();
         replaceVariables(tree);
-        //replaceJobsOnSteps(tree);
-        print("", tree, false, new ArrayList<>());
+        replaceJobsOnSteps(tree);
+        print("", tree, new ArrayList<>());
     }
 
     private static void replaceJobsOnSteps(final Map<String, Object> tree) {
-        //tree.forEach();
+        for (String key : tree.keySet()) {
+            if (key.equals(Constants.KEY_JOBS)) {
+                tree.put(Constants.KEY_STEPS, tree.remove(Constants.KEY_JOBS));
+                for (Object item : (List) tree.get(Constants.KEY_STEPS)) {
+                    if (item instanceof Map)
+                        replaceJobsOnSteps((Map<String, Object>) item);
+                }
+            }
+        }
     }
 
-    private static void print(final String tab, final Map<String, Object> tree, final boolean parallel, final List<String> parentConfig) {
+    private static void print(final String tab, final Map<String, Object> tree, final List<String> parentConfig) {
         if (tree.containsKey(Constants.KEY_TYPE)) {
             String key = Constants.KEY_TYPE;
             switch ((String) tree.get(key)) {
@@ -39,33 +47,24 @@ class ScenarioConverter {
                 break;
                 case Constants.STEP_TYPE_SEQ: {
                     createAndPrintParentConfig(tab, tree, parentConfig);
-                    if (tree.containsKey(Constants.KEY_STEPS)) {
-                        print(tab, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
-                    } else {
-                        print(tab, (ArrayList<Object>) tree.get(Constants.KEY_JOBS), false, parentConfig);
-                    }
-                    if (((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG))
+                    print(tab, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
+                    if (tree.containsKey(Constants.KEY_CONFIG))
                         parentConfig.remove(parentConfig.size() - 1);
                 }
                 break;
                 case Constants.STEP_TYPE_PARALLEL: {
                     createAndPrintParentConfig(tab, tree, parentConfig);
                     String key_steps = null;
-                    if (tree.containsKey(Constants.KEY_STEPS)) {
-                        key_steps = Constants.KEY_STEPS;
-                    } else {
-                        key_steps = Constants.KEY_JOBS;
-                    }
+                    key_steps = Constants.KEY_STEPS;
                     final int stepsCount = ((ArrayList<Object>) tree.get(key_steps)).size();
                     print(tab, (ArrayList<Object>) tree.get(key_steps), true, parentConfig);
-                    if (((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG))
+                    if (tree.containsKey(Constants.KEY_CONFIG))
                         parentConfig.remove(parentConfig.size() - 1);
                     final String str = createParallelSteps(tab, stepsCount);
                     System.out.print(str + "\n");
                 }
                 break;
                 case Constants.STEP_TYPE_FOR: {
-                    //createAndPrintparentConfig(tab, tree, parentConfig);
                     String str = null;
                     if (tree.containsKey(Constants.KEY_VALUE)) {
                         final Object val = tree.get(Constants.KEY_VALUE);
@@ -82,11 +81,7 @@ class ScenarioConverter {
 
                     System.out.print(str + "\n");
                     createAndPrintParentConfig(tab, tree, parentConfig);
-                    if (tree.containsKey(Constants.KEY_STEPS)) {
-                        print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
-                    } else {
-                        print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_JOBS), false, parentConfig);
-                    }
+                    print(tab + Constants.TAB, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
                     if (((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG))
                         parentConfig.remove(parentConfig.size() - 1);
                     System.out.println(tab + "};");
@@ -112,17 +107,17 @@ class ScenarioConverter {
         for (Object step : steps) {
             if (step instanceof Map) {
                 if (parallel) {
-                    createParallelFunction(tab, step, parallel, parentConfig);
+                    createParallelFunction(tab, step, parentConfig);
                 } else {
-                    print(tab, (Map<String, Object>) step, parallel, parentConfig);
+                    print(tab, (Map<String, Object>) step, parentConfig);
                 }
             }
         }
     }
 
-    private static void createParallelFunction(final String tab, final Object step, final boolean parallel, final List<String> parentConfig) {
+    private static void createParallelFunction(final String tab, final Object step, final List<String> parentConfig) {
         System.out.print(tab + "function func" + (parallelCounter.incrementAndGet()) + "() {\n");
-        print(tab + Constants.TAB, (Map<String, Object>) step, parallel, parentConfig);
+        print(tab + Constants.TAB, (Map<String, Object>) step, parentConfig);
         System.out.println(tab + "};\n");
     }
 
