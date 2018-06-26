@@ -1,12 +1,15 @@
 public interface Constants {
     String STEP_TYPE_FOR = "for";
+    String STEP_TYPE_CHAIN = "chain";
     String STEP_TYPE_COMMAND = "command";
     String STEP_TYPE_SEQ = "sequential";
     String STEP_TYPE_LOAD = "load";
+    String STEP_TYPE_MIXED = "mixed";
     String STEP_TYPE_PARALLEL = "parallel";
     String STEP_TYPE_PRECONDITION = "precondition";
 
     String KEY_AUTH = "auth";
+    String KEY_GENERATOR = "generator";
     String KEY_CONFIG = "config";
     String KEY_CONCURRENCY = "concurrency";
     String KEY_CREATE = "create";
@@ -32,6 +35,8 @@ public interface Constants {
     String KEY_NET = "net";
     String KEY_FILE = "file";
     String KEY_PATH = "path";
+    String KEY_WEIGHTS = "weights";
+    String KEY_WEIGHT = "weight";
 
     String VAR_PATTERN = "\\$\\{%s\\}";
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";

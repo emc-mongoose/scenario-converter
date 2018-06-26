@@ -145,4 +145,12 @@ public class ConfigConverter {
         }
         return str;
     }
+
+    public static Map addWeight(final Map config, final Object weight) {
+        final Map newConfig = config;
+        final Map w = new HashMap();
+        w.put(Constants.KEY_WEIGHT, weight);
+        addToSection(w, newConfig, new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_GENERATOR)));
+        return newConfig;
+    }
 }

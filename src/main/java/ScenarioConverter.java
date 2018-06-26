@@ -44,6 +44,16 @@ class ScenarioConverter {
                     System.out.print(str + "\n\n");
                 }
                 break;
+                case Constants.STEP_TYPE_CHAIN: {
+                    final String str = createPipelineLoad(tab, (List) tree.get(Constants.KEY_CONFIG), parentConfig);
+                    System.out.print(str + "\n\n");
+                }
+                break;
+                case Constants.STEP_TYPE_MIXED: {
+                    final String str = createWeightedLoad(tab, tree, parentConfig);
+                    System.out.print(str + "\n\n");
+                }
+                break;
                 case Constants.STEP_TYPE_SEQ: {
                     createAndPrintParentConfig(tab, tree, parentConfig);
                     print(tab, (ArrayList<Object>) tree.get(Constants.KEY_STEPS), false, parentConfig);
@@ -100,6 +110,34 @@ class ScenarioConverter {
                     System.out.println(tab + "<" + tree.get(key) + ">");
             }
         }
+    }
+
+    private static String createWeightedLoad(final String tab, final Map<String, Object> tree, final List<String> parentConfig) {
+        final List<Map<String, Object>> configs = (List) tree.get(Constants.KEY_CONFIG);
+        final List weights = (List) tree.get(Constants.KEY_WEIGHTS);
+        if (weights == null) System.err.println("< ERROR: This scenario can't be converted : Mixed Load must have weights >");
+        String str = tab + "WeightedLoad\n";
+        for (String configName : parentConfig) {
+            str += tab + Constants.TAB + ".config(" + configName + ") //parent\n";
+        }
+        for (int i = 0; i < configs.size(); ++i) {
+            str += tab + Constants.TAB + ".config(" +
+                    convertConfig(tab + Constants.TAB, configs.get(i), weights.get(i)) + ") //substeps\n";
+        }
+        str += tab + Constants.TAB + ".run();";
+        return str;
+    }
+
+    private static String createPipelineLoad(final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig) {
+        //TODO: verifyLoad, mixed ... and others
+        String str = tab + "PipelineLoad\n";
+        for (String configName : parentConfig) {
+            str += tab + Constants.TAB + ".config(" + configName + ") //parent\n";
+        }
+        for (Map<String, Object> config : configs)
+            str += tab + Constants.TAB + ".config(" + convertConfig(tab + Constants.TAB, config) + ") //substeps\n";
+        str += tab + Constants.TAB + ".run();";
+        return str;
     }
 
     private static void print(final String tab, final ArrayList<Object> steps, final boolean parallel, final List<String> parentConfig) {
@@ -281,6 +319,11 @@ class ScenarioConverter {
 //        }
         str = removeQuotes(str);
         return str;
+    }
+
+    private static String convertConfig(final String tab, final Map<String, Object> map, final Object weight) {
+        final Map config = ConfigConverter.addWeight(ConfigConverter.convertConfig(map), weight);
+        return convertConfig(tab, config);
     }
 
     private static String removeQuotes(final String str) {
