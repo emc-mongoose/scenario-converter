@@ -40,7 +40,7 @@ public interface Constants {
     String SEQ_POSTFIX = "_seq";
     String VAR_FORMAT = "${%s}";
     String FOR_FORMAT = "for( var %s = %s; %s < %s; %s += %s ){";
-    String FORIN_FORMAT = "for each ( %s in %s ){";
+    String FORIN_FORMAT = "for each (%s in %s){";
     String WHILE_FORMAT = "while( true ){";
     String COMMAND_FORMAT = "%svar cmd_%d = new java.lang.ProcessBuilder()\n%s" +
             TAB + ".command(\"sh\", \"-c\", %s)\n%s" +
