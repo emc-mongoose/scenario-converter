@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +15,7 @@ class ScenarioConverter {
 
     private static Scenario oldScenario;
 
-    public static void print(final Scenario scenario) throws IOException {
+    public static void print(final Scenario scenario) {
         oldScenario = scenario;
         final Map<String, Object> tree = oldScenario.getStepTree();
         replaceVariables(tree);

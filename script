@@ -1,10 +1,10 @@
 #!/bin/bash
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/misc/issue-sltm745.json > results/issue-sltm745.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/misc/rampup.json > results/rampup.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/misc/backward-compatibility.json > results/backward-compatibility.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/loop/by-count-arg.json > results/by-count-arg.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/dynamic/s3-multiuser.json > results/s3-multiuser.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/dynamic/read-files-from-variable-path.json > results/read-files-from-variable-path.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/misc/cmd-blocking.json > results/cmd-blocking.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/misc/max.s3.8.json > results/max.s3.8.js 
-java -jar build/libs/converter-all-1.0.jar example/scenario/json/test.json > results/test.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/misc/issue-sltm745.json > results/issue-sltm745.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/misc/rampup.json > results/rampup.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/misc/backward-compatibility.json > results/backward-compatibility.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/loop/by-count-arg.json > results/by-count-arg.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/dynamic/s3-multiuser.json > results/s3-multiuser.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/dynamic/read-files-from-variable-path.json > results/read-files-from-variable-path.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/misc/cmd-blocking.json > results/cmd-blocking.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/misc/max.s3.8.json > results/max.s3.8.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/test.json > results/test.js 
