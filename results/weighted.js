@@ -48,8 +48,8 @@ var step_1 = PreconditionLoad
     .run();
 
 WeightedLoad
-    .config(parentConfig_1) //parent
-    .config({
+    .config(parentConfig_1)
+    .append({
       "load" : {
         "generator" : {
           "weight" : 20
@@ -65,8 +65,8 @@ WeightedLoad
           "size" : "4KB-16KB"
         }
       }
-    }) //substeps
-    .config({
+    })
+    .append({
       "load" : {
         "type" : "read",
         "generator" : {
@@ -81,6 +81,6 @@ WeightedLoad
           "file" : "weighted-load.csv"
         }
       }
-    }) //substeps
+    })
     .run();
 

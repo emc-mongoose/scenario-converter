@@ -1,17 +1,17 @@
 PipelineLoad
-    .config({
+    .append({
       "item" : {
         "output" : {
           "path" : "/default"
         }
       }
     }) //substeps
-    .config({
+    .append({
       "load" : {
         "type" : "read"
       }
     }) //substeps
-    .config({
+    .append({
       "load" : {
         "type" : "update"
       },
@@ -23,7 +23,7 @@ PipelineLoad
         }
       }
     }) //substeps
-    .config({
+    .append({
       "load" : {
         "type" : "read"
       },
@@ -33,12 +33,12 @@ PipelineLoad
         }
       }
     }) //substeps
-    .config({
+    .append({
       "load" : {
         "type" : "delete"
       }
     }) //substeps
-    .config({
+    .append({
       "load" : {
         "type" : "noop"
       }

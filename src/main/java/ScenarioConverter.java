@@ -119,24 +119,23 @@ class ScenarioConverter {
             System.err.println("< ERROR: This scenario can't be converted : Mixed Load must have weights >");
         String str = tab + "WeightedLoad\n";
         for (String configName : parentConfig) {
-            str += tab + Constants.TAB + ".config(" + configName + ") //parent\n";
+            str += tab + Constants.TAB + ".config(" + configName + ")\n";
         }
         for (int i = 0; i < configs.size(); ++i) {
-            str += tab + Constants.TAB + ".config(" +
-                    convertConfig(tab + Constants.TAB, configs.get(i), weights.get(i)) + ") //substeps\n";
+            str += tab + Constants.TAB + ".append(" +
+                    convertConfig(tab + Constants.TAB, configs.get(i), weights.get(i)) + ")\n";
         }
         str += tab + Constants.TAB + ".run();";
         return str;
     }
 
     private static String createPipelineLoad(final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig) {
-        //TODO: verifyLoad, mixed ... and others
         String str = tab + "PipelineLoad\n";
         for (String configName : parentConfig) {
             str += tab + Constants.TAB + ".config(" + configName + ") //parent\n";
         }
         for (Map<String, Object> config : configs)
-            str += tab + Constants.TAB + ".config(" + convertConfig(tab + Constants.TAB, config) + ") //substeps\n";
+            str += tab + Constants.TAB + ".append(" + convertConfig(tab + Constants.TAB, config) + ") //substeps\n";
         str += tab + Constants.TAB + ".run();";
         return str;
     }

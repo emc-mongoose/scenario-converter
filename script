@@ -8,3 +8,7 @@ java -jar build/libs/converter-1.0.jar example/scenario/json/dynamic/read-files-
 java -jar build/libs/converter-1.0.jar example/scenario/json/misc/cmd-blocking.json > results/cmd-blocking.js 
 java -jar build/libs/converter-1.0.jar example/scenario/json/misc/max.s3.8.json > results/max.s3.8.js 
 java -jar build/libs/converter-1.0.jar example/scenario/json/test.json > results/test.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/mixed/chain.json > results/chain.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/mixed/mixed.json > results/mixed.js 
+java -jar build/libs/converter-1.0.jar example/scenario/json/mixed/weighted.json > results/weighted.js 
+
