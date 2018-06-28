@@ -122,6 +122,9 @@ class ScenarioConverter {
             str += tab + Constants.TAB + ".config(" + configName + ")\n";
         }
         for (int i = 0; i < configs.size(); ++i) {
+            if (i == 0) {
+                str += tab + Constants.TAB + ".config(" + ConfigConverter.pullLoadStepSectionStr(configs.get(i)) + ")\n";
+            }
             str += tab + Constants.TAB + ".append(" +
                     convertConfig(tab + Constants.TAB, configs.get(i), weights.get(i)) + ")\n";
         }
@@ -132,10 +135,14 @@ class ScenarioConverter {
     private static String createPipelineLoad(final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig) {
         String str = tab + "PipelineLoad\n";
         for (String configName : parentConfig) {
-            str += tab + Constants.TAB + ".config(" + configName + ") //parent\n";
+            str += tab + Constants.TAB + ".config(" + configName + ")\n";
         }
-        for (Map<String, Object> config : configs)
-            str += tab + Constants.TAB + ".append(" + convertConfig(tab + Constants.TAB, config) + ") //substeps\n";
+        for (int i = 0; i < configs.size(); ++i) {
+            if (i == 0) {
+                str += tab + Constants.TAB + ".config(" + ConfigConverter.pullLoadStepSectionStr(configs.get(i)) + ")\n";
+            }
+            str += tab + Constants.TAB + ".append(" + convertConfig(tab + Constants.TAB, configs.get(i)) + ")\n";
+        }
         str += tab + Constants.TAB + ".run();";
         return str;
     }

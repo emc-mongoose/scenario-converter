@@ -153,4 +153,22 @@ public class ConfigConverter {
         addToSection(w, newConfig, new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_GENERATOR)));
         return newConfig;
     }
+
+    public static Map pullLoadStepSection(final Map config) {
+        final Map newConfig = convertConfig(config);
+        final Map section = new HashMap();
+        if (newConfig.containsKey(Constants.KEY_LOAD)) {
+            final Map load = ((Map) newConfig.get(Constants.KEY_LOAD));
+            if (load.containsKey(Constants.KEY_STEP)) {
+                final Object step = load.get(Constants.KEY_STEP);
+                section.put(Constants.KEY_LOAD, new HashMap<>());
+                ((Map) section.get(Constants.KEY_LOAD)).put(Constants.KEY_STEP, step);
+            }
+        }
+        return section;
+    }
+
+    public static String pullLoadStepSectionStr(final Map config) {
+        return mapToStr(pullLoadStepSection(config));
+    }
 }
