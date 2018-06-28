@@ -33,7 +33,7 @@ or for multiple converting use '--m' key:
 ```bash
 java -jar --m <path to jar-file> <path 1> <path 2> ... <path n>
 ```
-  Result will be print into files with the same name in directory 'results'
+  Result will be print into files with the same name in the same directory with extension .js.
 ## Contributors
 [Veronika Kochugova](https://github.com/veronikaKochugova)
 ## Links
