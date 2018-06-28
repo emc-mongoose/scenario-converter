@@ -6,20 +6,17 @@ import java.util.logging.Logger;
 public class Main {
 
     public static String MULTIPLE_PATH_KEY = "--m";
-    public static String RESULT_DIRECTORY_PATH = "results";
 
     public static void main(String[] args) throws IOException {
         try {
             if (args[0].equals(MULTIPLE_PATH_KEY)) {
                 for (int i = 1; i < args.length; ++i) {
-                    final Path pathToFile = Paths.get(args[i]);
-                    final String fileName = pathToFile.getFileName().toString().split("\\.")[0];
-                    if (!(new File(RESULT_DIRECTORY_PATH)).exists())
-                        (new File(RESULT_DIRECTORY_PATH)).mkdirs();
+                    final Path path = Paths.get(args[i]);
+                    final String newPath = path.toString().replaceAll("\\.json", ".js");
                     final PrintStream out = new PrintStream(
-                            new FileOutputStream(Paths.get(RESULT_DIRECTORY_PATH, fileName + ".js").toString()));
+                            new FileOutputStream(newPath));
                     System.setOut(out);
-                    ScenarioConverter.print(new Scenario(Scenario.parseJson(pathToFile.toFile())));
+                    ScenarioConverter.print(new Scenario(Scenario.parseJson(path.toFile())));
                 }
             } else {
                 ScenarioConverter.print(new Scenario(Scenario.parseJson(Paths.get(args[0]).toFile())));
