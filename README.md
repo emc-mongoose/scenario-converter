@@ -7,17 +7,22 @@ This tool converts the [Json-scenarios](https://github.com/emc-mongoose/mongoose
 Load Generator is a component which generates the I/O tasks from the
 items got from the input. Many storage drivers may be associated with a
 load generator. The basic properties are:
-* 
+
+* ...
 
 ### Scenario Converter
 Scenario Converter is a component with generates script on JavaScript.
+
 Functionality:
-* 
+
+* ...
 
 ### Configurations Converter
 Configurations Converter
+
 Functionality:
-* 
+
+* ...
 
 ## Development
   In order to build project, go to the 'converter' directory and type:
