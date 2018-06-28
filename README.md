@@ -25,14 +25,15 @@ Jar-file will have path '/converter/build/libs/converter-\<version\>.jar'.
 ```bash
 java -jar <path to jar-file> <path to json-scenario>
 ```
-or for multiple converting:
-```bash
-java -jar <path to jar-file> <path 1> <path 2> ... <path n>
-```
   Result will be print into std-output. To create .js file use the following:
 ```bash
 java -jar <path to jar-file> <path to json-scenario>  >  <path to JS-scenario>
-```  
+``` 
+or for multiple converting use '--m' key:
+```bash
+java -jar --m <path to jar-file> <path 1> <path 2> ... <path n>
+```
+  Result will be print into files with the same name in directory 'results'
 ## Contributors
 [Veronika Kochugova](https://github.com/veronikaKochugova)
 ## Links
