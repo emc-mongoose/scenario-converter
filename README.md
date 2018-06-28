@@ -4,25 +4,15 @@ This tool converts the [Json-scenarios](https://github.com/emc-mongoose/mongoose
 ## Design
 
 ### Scenario 
-Load Generator is a component which generates the I/O tasks from the
-items got from the input. Many storage drivers may be associated with a
-load generator. The basic properties are:
-
-* ...
+Scenario is an entity that comes from Json. It stores in itself the tree structure of the Json-scenario and the variables used in it.
 
 ### Scenario Converter
-Scenario Converter is a component with generates script on JavaScript.
-
-Functionality:
-
-* ...
+Scenario Converter is a component with generates scenario on JavaScript. 
+As input data, it takes the Scenario entry, and the result on JavaScript outputs to standard output.
 
 ### Configurations Converter
-Configurations Converter
-
-Functionality:
-
-* ...
+Configurations Converter is a component, used to convert only "config" section in scenarios. 
+It takes into account the changes for the 4th Mongoose version and generates a new configuration with changes.
 
 ## Development
   In order to build project, go to the 'converter' directory and type:
