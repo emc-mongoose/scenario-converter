@@ -113,37 +113,45 @@ class ScenarioConverter {
     }
 
     private static String createWeightedLoad(final String tab, final Map<String, Object> tree, final List<String> parentConfig) {
-        final List<Map<String, Object>> configs = (List) tree.get(Constants.KEY_CONFIG);
+        final List<Map<String, Object>> configsRaw = (List) tree.get(Constants.KEY_CONFIG);
+        final List<Map<String, Object>> configs = new ArrayList<>();
+        final String tabb = tab + Constants.TAB;
+        for (Map config : configsRaw) {
+            configs.add(ConfigConverter.convertConfig(config));
+        }
         final List weights = (List) tree.get(Constants.KEY_WEIGHTS);
-        if (weights == null)
+        if (weights == null) {
             System.err.println("< ERROR: This scenario can't be converted : Mixed Load must have weights >");
+        }
+
         String str = tab + "WeightedLoad\n";
         for (String configName : parentConfig) {
-            str += tab + Constants.TAB + ".config(" + configName + ")\n";
+            str += tabb + ".config(" + configName + ")\n";
         }
+
         for (int i = 0; i < configs.size(); ++i) {
             if (i == 0) {
-                str += tab + Constants.TAB + ".config(" + ConfigConverter.pullLoadStepSectionStr(configs.get(i)) + ")\n";
+                str += tabb + ".config(" + pullLoadSection(tabb, configs.get(i)) + ")\n";
             }
-            str += tab + Constants.TAB + ".append(" +
-                    convertConfig(tab + Constants.TAB, configs.get(i), weights.get(i)) + ")\n";
+            str += tabb + ".append(" + convertConfig(tabb, configs.get(i), weights.get(i)) + ")\n";
         }
-        str += tab + Constants.TAB + ".run();";
+        str += tabb + ".run();";
         return str;
     }
 
     private static String createPipelineLoad(final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig) {
         String str = tab + "PipelineLoad\n";
+        final String tabb = tab + Constants.TAB;
         for (String configName : parentConfig) {
-            str += tab + Constants.TAB + ".config(" + configName + ")\n";
+            str += tabb + ".config(" + configName + ")\n";
         }
         for (int i = 0; i < configs.size(); ++i) {
             if (i == 0) {
-                str += tab + Constants.TAB + ".config(" + ConfigConverter.pullLoadStepSectionStr(configs.get(i)) + ")\n";
+                str += tabb + ".config(" + pullLoadSection(tabb, configs.get(i)) + ")\n";
             }
-            str += tab + Constants.TAB + ".append(" + convertConfig(tab + Constants.TAB, configs.get(i)) + ")\n";
+            str += tabb + ".append(" + convertConfig(tabb, configs.get(i)) + ")\n";
         }
-        str += tab + Constants.TAB + ".run();";
+        str += tabb + ".run();";
         return str;
     }
 
@@ -321,9 +329,13 @@ class ScenarioConverter {
     private static String convertConfig(final String tab, final Map map) {
         String str = ConfigConverter.convertConfigAndToJson(map);
         str = str.replaceAll("\\n", "\n" + tab);
-//        for (String var : oldScenario.getAllVarList()) {
-//            str = str.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
-//        }
+        str = removeQuotes(str);
+        return str;
+    }
+
+    private static String pullLoadSection(final String tab, final Map map) {
+        String str = ConfigConverter.pullLoadStepSectionStr(map);
+        str = str.replaceAll("\\n", "\n" + tab);
         str = removeQuotes(str);
         return str;
     }

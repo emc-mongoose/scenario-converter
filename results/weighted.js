@@ -49,15 +49,19 @@ var step_1 = PreconditionLoad
 
 WeightedLoad
     .config(parentConfig_1)
-    .append({
+    .config({
       "load" : {
-        "generator" : {
-          "weight" : 20
-        },
         "step" : {
           "limit" : {
             "time" : "90s"
           }
+        }
+      }
+    })
+    .append({
+      "load" : {
+        "generator" : {
+          "weight" : 20
         }
       },
       "item" : {

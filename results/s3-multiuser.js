@@ -1,4 +1,4 @@
-var step_1 = CreateLoad
+var step_1 = Load
     .config({
       "item" : {
         "data" : {

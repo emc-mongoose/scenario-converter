@@ -65,7 +65,7 @@ function func2() {
                 .start();
             cmd_4.waitFor();
 
-            var step_3 = CreateLoad
+            var step_3 = Load
                 .config({
                   "load" : {
                     "step" : {

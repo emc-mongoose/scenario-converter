@@ -71,7 +71,7 @@ var cmd_1 = new java.lang.ProcessBuilder()
     .start();
 cmd_1.waitFor();
 
-var step_3 = CreateLoad
+var step_3 = Load
     .config(parentConfig_1)
     .config({
       "item" : {
@@ -105,7 +105,7 @@ var cmd_2 = new java.lang.ProcessBuilder()
     .start();
 cmd_2.waitFor();
 
-var step_4 = CreateLoad
+var step_4 = Load
     .config(parentConfig_1)
     .config({
       "item" : {
@@ -139,7 +139,7 @@ var cmd_3 = new java.lang.ProcessBuilder()
     .start();
 cmd_3.waitFor();
 
-var step_5 = CreateLoad
+var step_5 = Load
     .config(parentConfig_1)
     .config({
       "item" : {
@@ -173,7 +173,7 @@ var cmd_4 = new java.lang.ProcessBuilder()
     .start();
 cmd_4.waitFor();
 
-var step_6 = CreateLoad
+var step_6 = Load
     .config(parentConfig_1)
     .config({
       "item" : {
@@ -207,7 +207,7 @@ var cmd_5 = new java.lang.ProcessBuilder()
     .start();
 cmd_5.waitFor();
 
-var step_7 = CreateLoad
+var step_7 = Load
     .config(parentConfig_1)
     .config({
       "item" : {
@@ -241,7 +241,7 @@ var cmd_6 = new java.lang.ProcessBuilder()
     .start();
 cmd_6.waitFor();
 
-var step_8 = CreateLoad
+var step_8 = Load
     .config(parentConfig_1)
     .config({
       "item" : {

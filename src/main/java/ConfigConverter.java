@@ -15,7 +15,7 @@ public class ConfigConverter {
             final Map<String, Object> map = new ObjectMapper()
                     .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
                     .configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
-                    .<Map<String, Object>>readValue(
+                    .readValue(
                             oldConfig, new TypeReference<Map<String, Object>>() {
                             }
                     );
@@ -37,16 +37,18 @@ public class ConfigConverter {
     }
 
     public static String pullLoadType(final Map<String, Object> config) {
-        if (((Map<String, Object>) config).containsKey(Constants.KEY_LOAD) &&
-                ((Map<String, Object>) ((Map<String, Object>) config).get(Constants.KEY_LOAD)).containsKey(Constants.KEY_TYPE))
-            return (String) ((Map<String, Object>) config.get(Constants.KEY_LOAD)).get(Constants.KEY_TYPE);
-//        if (type != null) {
-//            ((Map<String, Object>) config.get(KEY_LOAD)).remove(KEY_TYPE);
-//            if (((Map<String, Object>) config.get(KEY_LOAD)).isEmpty()) {
-//                config.remove(KEY_LOAD);
-//            }
-//        }
-        return Constants.KEY_CREATE;
+        String type = new String();
+        if (config.containsKey(Constants.KEY_LOAD))
+            if (((Map<String, Object>) config.get(Constants.KEY_LOAD)).containsKey(Constants.KEY_TYPE)) {
+                type = (String) ((Map<String, Object>) config.get(Constants.KEY_LOAD)).get(Constants.KEY_TYPE);
+            }
+        if (type.isEmpty()) {
+            ((Map<String, Object>) config.get(Constants.KEY_LOAD)).remove(Constants.KEY_TYPE);
+            if (((Map<String, Object>) config.get(Constants.KEY_LOAD)).isEmpty()) {
+                config.remove(Constants.KEY_LOAD);
+            }
+        }
+        return type;
     }
 
     private static void convert(final Map<String, Object> tree, final Map<String, Object> newTree) {
@@ -155,14 +157,14 @@ public class ConfigConverter {
     }
 
     public static Map pullLoadStepSection(final Map config) {
-        final Map newConfig = convertConfig(config);
         final Map section = new HashMap();
-        if (newConfig.containsKey(Constants.KEY_LOAD)) {
-            final Map load = ((Map) newConfig.get(Constants.KEY_LOAD));
+        if (config.containsKey(Constants.KEY_LOAD)) {
+            final Map load = ((Map) config.get(Constants.KEY_LOAD));
             if (load.containsKey(Constants.KEY_STEP)) {
                 final Object step = load.get(Constants.KEY_STEP);
                 section.put(Constants.KEY_LOAD, new HashMap<>());
                 ((Map) section.get(Constants.KEY_LOAD)).put(Constants.KEY_STEP, step);
+                deepRemove(config, new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP)));
             }
         }
         return section;
@@ -171,4 +173,5 @@ public class ConfigConverter {
     public static String pullLoadStepSectionStr(final Map config) {
         return mapToStr(pullLoadStepSection(config));
     }
+
 }

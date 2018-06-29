@@ -1,16 +1,17 @@
 PipelineLoad
+    .config({ })
     .append({
       "item" : {
         "output" : {
           "path" : "/default"
         }
       }
-    }) //substeps
+    })
     .append({
       "load" : {
         "type" : "read"
       }
-    }) //substeps
+    })
     .append({
       "load" : {
         "type" : "update"
@@ -22,7 +23,7 @@ PipelineLoad
           }
         }
       }
-    }) //substeps
+    })
     .append({
       "load" : {
         "type" : "read"
@@ -32,16 +33,16 @@ PipelineLoad
           "verify" : true
         }
       }
-    }) //substeps
+    })
     .append({
       "load" : {
         "type" : "delete"
       }
-    }) //substeps
+    })
     .append({
       "load" : {
         "type" : "noop"
       }
-    }) //substeps
+    })
     .run();
 
