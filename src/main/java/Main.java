@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    public static String MULTIPLE_PATH_KEY = "--m";
+    public static final String MULTIPLE_PATH_KEY = "--m";
 
     public static void main(String[] args) throws IOException {
         try {
