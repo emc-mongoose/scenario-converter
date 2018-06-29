@@ -29,7 +29,7 @@ task makeJar(type: Jar) {
                 'Main-Class': 'Main'
         )
     }
-    baseName = project.name + '-all'
+    baseName = project.name
     from {
         configurations.compile.collect {
             it.isDirectory() ? it : zipTree(it)

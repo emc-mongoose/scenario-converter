@@ -1,0 +1,6 @@
+/.idea
+/build
+/out
+result
+result-thresholod
+.gradle/
