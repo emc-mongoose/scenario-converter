@@ -8,7 +8,7 @@ public class Main {
     public static final String MULTIPLE_PATH_KEY = "--m";
 
     public static void main(String[] args) throws IOException {
-        try {
+        if (args.length != 0) {
             if (args[0].equals(MULTIPLE_PATH_KEY)) {
                 for (int i = 1; i < args.length; ++i) {
                     final Path path = Paths.get(args[i]);
@@ -21,8 +21,9 @@ public class Main {
             } else {
                 ScenarioConverter.print(new Scenario(Scenario.parseJson(Paths.get(args[0]).toFile())));
             }
-        } catch (final IndexOutOfBoundsException ex) {
+        } else {
             Logger.getGlobal().warning("No scenario-file");
+
         }
     }
 }

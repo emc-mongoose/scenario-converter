@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.akurilov.commons.collection.TreeUtil;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConfigConverter {
 
@@ -33,7 +36,14 @@ public class ConfigConverter {
     }
 
     private static String replaceArrays(final String str) {
-        return str.replaceAll("\\[", "new java.util.ArrayList([").replaceAll("\\]", "])");
+        final Pattern p = Pattern.compile(":\\s*\\[[^\\]]*\\]");
+        final Matcher m = p.matcher(str);
+        String result = str;
+        while (m.find()) {
+            final String entry = m.group(0).split("\\[|\\]")[1];
+            result = str.replaceAll("\\[" + entry + "\\]", "new java.util.ArrayList([" + entry + "])");
+        }
+        return result;
     }
 
     public static String pullLoadType(final Map<String, Object> config) {

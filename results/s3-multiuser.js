@@ -5,7 +5,7 @@ var step_1 = Load
           "size" : "10KB"
         },
         "output" : {
-          "path" : "bucket-%d(314159265){00}new java.util.ArrayList([0-99])",
+          "path" : "bucket-%d(314159265){00}[0-99]",
           "file" : "objects.csv"
         }
       },
@@ -14,7 +14,7 @@ var step_1 = Load
           "type" : "s3"
         },
         "auth" : {
-          "uid" : "user-%d(314159265){00}new java.util.ArrayList([0-99])",
+          "uid" : "user-%d(314159265){00}[0-99]",
           "file" : "credentials.csv"
         }
       },

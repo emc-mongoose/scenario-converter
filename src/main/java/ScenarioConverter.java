@@ -293,8 +293,6 @@ class ScenarioConverter {
             str += "var " + varName + " = PreconditionLoad\n";
         } else {
             final String type = (config != null) ? ConfigConverter.pullLoadType(config) : "";
-            //TODO: verifyLoad, precondition, mixed ... and others
-
             switch (type) {
                 case Constants.KEY_CREATE: {
                     str += "var " + varName + " = CreateLoad\n";
