@@ -14,6 +14,9 @@ As input data, it takes the Scenario entry, and the result on JavaScript outputs
 Configurations Converter is a component, used to convert only "config" section in scenarios. 
 It takes into account the changes for the 4th Mongoose version and generates a new configuration with changes.
 
+### Limitation
+The converter doesn't support scenarios using mixedLoad-steps without weights, since in the new version of Mongoose there is no such step type.
+
 ## Development
   In order to build project, go to the 'converter' directory and type:
 ```bash
