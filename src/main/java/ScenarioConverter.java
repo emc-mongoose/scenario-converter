@@ -23,18 +23,6 @@ class ScenarioConverter {
         print("", tree, new ArrayList<>());
     }
 
-    private static void replaceJobsOnSteps(final Map<String, Object> tree) {
-        for (String key : tree.keySet()) {
-            if (key.equals(Constants.KEY_JOBS)) {
-                tree.put(Constants.KEY_STEPS, tree.remove(Constants.KEY_JOBS));
-                for (Object item : (List) tree.get(Constants.KEY_STEPS)) {
-                    if (item instanceof Map)
-                        replaceJobsOnSteps((Map<String, Object>) item);
-                }
-            }
-        }
-    }
-
     private static void print(final String tab, final Map<String, Object> tree, final List<String> parentConfig) {
         if (tree.containsKey(Constants.KEY_TYPE)) {
             String key = Constants.KEY_TYPE;
@@ -112,6 +100,18 @@ class ScenarioConverter {
         }
     }
 
+    private static void print(final String tab, final ArrayList<Object> steps, final boolean parallel, final List<String> parentConfig) {
+        for (Object step : steps) {
+            if (step instanceof Map) {
+                if (parallel) {
+                    createParallelFunction(tab, step, parentConfig);
+                } else {
+                    print(tab, (Map<String, Object>) step, parentConfig);
+                }
+            }
+        }
+    }
+
     private static String createWeightedLoad(final String tab, final Map<String, Object> tree, final List<String> parentConfig) {
         final List<Map<String, Object>> configsRaw = (List) tree.get(Constants.KEY_CONFIG);
         final List<Map<String, Object>> configs = new ArrayList<>();
@@ -153,18 +153,6 @@ class ScenarioConverter {
         }
         str += tabb + ".run();";
         return str;
-    }
-
-    private static void print(final String tab, final ArrayList<Object> steps, final boolean parallel, final List<String> parentConfig) {
-        for (Object step : steps) {
-            if (step instanceof Map) {
-                if (parallel) {
-                    createParallelFunction(tab, step, parentConfig);
-                } else {
-                    print(tab, (Map<String, Object>) step, parentConfig);
-                }
-            }
-        }
     }
 
     private static void createParallelFunction(final String tab, final Object step, final List<String> parentConfig) {
@@ -287,31 +275,30 @@ class ScenarioConverter {
 
     private static String createStepLoad(final String tab, final Map<String, Object> config,
                                          final List<String> parentConfig, final boolean isPrecondition) {
-        final String varName = "step_" + (stepCounter.incrementAndGet());
         String str = tab;
         if (isPrecondition) {
-            str += "var " + varName + " = PreconditionLoad\n";
+            str += "PreconditionLoad\n";
         } else {
             final String type = (config != null) ? ConfigConverter.pullLoadType(config) : "";
             switch (type) {
                 case Constants.KEY_CREATE: {
-                    str += "var " + varName + " = CreateLoad\n";
+                    str += "CreateLoad\n";
                 }
                 break;
                 case Constants.KEY_READ: {
-                    str += "var " + varName + " = ReadLoad\n";
+                    str += "ReadLoad\n";
                 }
                 break;
                 case Constants.KEY_UPDATE: {
-                    str += "var " + varName + " = UpdateLoad\n";
+                    str += "UpdateLoad\n";
                 }
                 break;
                 case Constants.KEY_DELETE: {
-                    str += "var " + varName + " = DeleteLoad\n";
+                    str += "DeleteLoad\n";
                 }
                 break;
                 default: {
-                    str += "var " + varName + " = Load\n";
+                    str += "Load\n";
                 }
             }
         }
@@ -349,5 +336,17 @@ class ScenarioConverter {
             tmp = tmp.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
         }
         return tmp;
+    }
+
+    private static void replaceJobsOnSteps(final Map<String, Object> tree) {
+        for (String key : tree.keySet()) {
+            if (key.equals(Constants.KEY_JOBS)) {
+                tree.put(Constants.KEY_STEPS, tree.remove(Constants.KEY_JOBS));
+                for (Object item : (List) tree.get(Constants.KEY_STEPS)) {
+                    if (item instanceof Map)
+                        replaceJobsOnSteps((Map<String, Object>) item);
+                }
+            }
+        }
     }
 }
