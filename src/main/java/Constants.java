@@ -38,6 +38,7 @@ public interface Constants {
     String KEY_WEIGHTS = "weights";
     String KEY_WEIGHT = "weight";
 
+    String PARAM_DELIMITER = "-";
     String VAR_PATTERN = "\\$\\{%s\\}";
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
     String QUOTES_PATTERN = "\"%s\"(?!( :))";
@@ -48,7 +49,7 @@ public interface Constants {
     String FORIN_FORMAT = "for each (%s in %s){";
     String WHILE_FORMAT = "while( true ){";
     String COMMAND_FORMAT = "%svar cmd_%d = new java.lang.ProcessBuilder()\n%s" +
-            TAB + ".command(\"sh\", \"-c\", %s)\n%s" +
+            TAB + ".command(\"/bin/sh\", \"-c\", %s)\n%s" +
             TAB + ".inheritIO()\n%s" +
             TAB + ".start();";
     String THREAD_TYPE_FORMAT = "var Thread = Java.type('java.lang.Thread');\n";
