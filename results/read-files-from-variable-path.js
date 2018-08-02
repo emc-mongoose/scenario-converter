@@ -19,7 +19,7 @@ var parentConfig_1 = {
   }
 };
 
-var step_1 = PreconditionLoad
+PreconditionLoad
     .config(parentConfig_1)
     .config({
       "item" : {
@@ -31,12 +31,9 @@ var step_1 = PreconditionLoad
     })
     .run();
 
-var step_2 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "type" : "read"
-      },
       "item" : {
         "input" : {
           "file" : "read-files-from-variable-path.csv"

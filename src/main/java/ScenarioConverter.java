@@ -138,15 +138,7 @@ class ScenarioConverter {
 			System.err.println("< ERROR: This scenario can't be converted : Mixed Load must have weights >");
 		}
 		String str = tab + "WeightedLoad\n";
-		for(String configName : parentConfig) {
-			str += tabb + ".config(" + configName + ")\n";
-		}
-		for(int i = 0; i < configs.size(); ++ i) {
-			if(i == 0) {
-				str += tabb + ".config(" + pullLoadSection(tabb, configs.get(i)) + ")\n";
-			}
-			str += tabb + ".append(" + convertConfig(tabb, configs.get(i), weights.get(i)) + ")\n";
-		}
+		str += createConfigs(tabb, configs, parentConfig, weights);
 		str += tabb + ".run();";
 		return str;
 	}
@@ -156,16 +148,34 @@ class ScenarioConverter {
 	) {
 		String str = tab + "PipelineLoad\n";
 		final String tabb = tab + Constants.TAB;
+		str += createConfigs(tabb, configs, parentConfig, null);
+		str += tabb + ".run();";
+		return str;
+	}
+
+	private static String createConfigs(
+		final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig, final List weights
+	) {
+		String str = new String();
+		//parent config
 		for(String configName : parentConfig) {
-			str += tabb + ".config(" + configName + ")\n";
+			str += tab + ".config(" + configName + ")\n";
 		}
+		//common config
 		for(int i = 0; i < configs.size(); ++ i) {
 			if(i == 0) {
-				str += tabb + ".config(" + pullLoadSection(tabb, configs.get(i)) + ")\n";
+				final String loadStepSection = pullLoadSection(tab, configs.get(i));
+				if(loadStepSection != null) {
+					str += tab + ".config(" + loadStepSection + ")\n";
+				}
 			}
-			str += tabb + ".append(" + convertConfig(tabb, configs.get(i)) + ")\n";
+			//substep config
+			if(weights != null) {
+				str += tab + ".append(" + convertConfig(tab, configs.get(i), weights.get(i)) + ")\n";
+			} else {
+				str += tab + ".append(" + convertConfig(tab, configs.get(i)) + ")\n";
+			}
 		}
-		str += tabb + ".run();";
 		return str;
 	}
 
@@ -346,6 +356,9 @@ class ScenarioConverter {
 
 	private static String pullLoadSection(final String tab, final Map map) {
 		String str = ConfigConverter.pullLoadStepSectionStr(map);
+		if(str == null) {
+			return null;
+		}
 		str = str.replaceAll("\\n", "\n" + tab);
 		str = removeQuotes(str);
 		return str;

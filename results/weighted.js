@@ -13,7 +13,7 @@ var parentConfig_1 = {
   }
 };
 
-var step_1 = PreconditionLoad
+PreconditionLoad
     .config(parentConfig_1)
     .config({
       "output" : {
@@ -50,17 +50,13 @@ var step_1 = PreconditionLoad
 WeightedLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : "90s"
-          }
-        }
+      "limit" : {
+        "time" : "90s"
       }
     })
     .append({
       "load" : {
-        "generator" : {
+        "op" : {
           "weight" : 20
         }
       },
@@ -72,11 +68,9 @@ WeightedLoad
     })
     .append({
       "load" : {
-        "type" : "read",
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          },
+        "op" : {
+          "recycle" : true,
+          "type" : "read",
           "weight" : 80
         }
       },

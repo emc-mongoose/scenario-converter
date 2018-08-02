@@ -11,7 +11,7 @@ var parentConfig_1 = {
   }
 };
 
-var step_1 = PreconditionLoad
+PreconditionLoad
     .config(parentConfig_1)
     .config({
       "load" : {
@@ -35,14 +35,13 @@ var step_1 = PreconditionLoad
     })
     .run();
 
-var step_2 = PreconditionLoad
+PreconditionLoad
     .config(parentConfig_1)
     .config({
       "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
+        "op" : {
+          "recycle" : true,
+          "type" : "read"
         },
         "step" : {
           "limit" : {
@@ -50,8 +49,7 @@ var step_2 = PreconditionLoad
             "time" : INIT_RUN_TIME,
             "concurrency" : 40
           }
-        },
-        "type" : "read"
+        }
       },
       "item" : {
         "data" : {
@@ -66,14 +64,23 @@ var step_2 = PreconditionLoad
     .run();
 
 var cmd_1 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_1.waitFor();
 
-var step_3 = Load
+Load
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 320
+          },
+          "id" : "MAX-W10KB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "10KB"
@@ -82,32 +89,28 @@ var step_3 = Load
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10KB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-W10KB"
-        }
-      },
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 320
-          }
-        }
       }
     })
     .run();
 
 var cmd_2 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_2.waitFor();
 
-var step_4 = Load
+Load
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 320
+          },
+          "id" : "MAX-W100KB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "100KB"
@@ -116,32 +119,28 @@ var step_4 = Load
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100KB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-W100KB"
-        }
-      },
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 320
-          }
-        }
       }
     })
     .run();
 
 var cmd_3 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_3.waitFor();
 
-var step_5 = Load
+Load
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 160
+          },
+          "id" : "MAX-W1MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "1MB"
@@ -150,32 +149,28 @@ var step_5 = Load
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W1MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-W1MB"
-        }
-      },
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 160
-          }
-        }
       }
     })
     .run();
 
 var cmd_4 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_4.waitFor();
 
-var step_6 = Load
+Load
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 80
+          },
+          "id" : "MAX-W10MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "10MB"
@@ -184,32 +179,28 @@ var step_6 = Load
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-W10MB"
-        }
-      },
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          }
-        }
       }
     })
     .run();
 
 var cmd_5 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_5.waitFor();
 
-var step_7 = Load
+Load
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 80
+          },
+          "id" : "MAX-W100MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "100MB"
@@ -218,32 +209,28 @@ var step_7 = Load
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-W100MB"
-        }
-      },
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          }
-        }
       }
     })
     .run();
 
 var cmd_6 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_6.waitFor();
 
-var step_8 = Load
+Load
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 80
+          },
+          "id" : "MAX-W200MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "200MB"
@@ -252,32 +239,31 @@ var step_8 = Load
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W200MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-W200MB"
-        }
-      },
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          }
-        }
       }
     })
     .run();
 
 var cmd_7 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_7.waitFor();
 
-var step_9 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 320
+          },
+          "id" : "MAX-R10KB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "10KB",
@@ -287,38 +273,31 @@ var step_9 = ReadLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10KB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-R10KB"
-        }
-      },
-      "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
-        },
-        "step" : {
-          "limit" : {
-            "concurrency" : 320,
-            "time" : RUN_TIME
-          }
-        },
-        "type" : "read"
       }
     })
     .run();
 
 var cmd_8 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_8.waitFor();
 
-var step_10 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 320
+          },
+          "id" : "MAX-R100KB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "100KB",
@@ -328,38 +307,31 @@ var step_10 = ReadLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100KB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-R100KB"
-        }
-      },
-      "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
-        },
-        "step" : {
-          "limit" : {
-            "concurrency" : 320,
-            "time" : RUN_TIME
-          }
-        },
-        "type" : "read"
       }
     })
     .run();
 
 var cmd_9 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_9.waitFor();
 
-var step_11 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 160
+          },
+          "id" : "MAX-R1MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "1MB",
@@ -369,38 +341,31 @@ var step_11 = ReadLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W1MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-R1MB"
-        }
-      },
-      "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
-        },
-        "step" : {
-          "limit" : {
-            "concurrency" : 160,
-            "time" : RUN_TIME
-          }
-        },
-        "type" : "read"
       }
     })
     .run();
 
 var cmd_10 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_10.waitFor();
 
-var step_12 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 80
+          },
+          "id" : "MAX-R10MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "10MB",
@@ -410,38 +375,31 @@ var step_12 = ReadLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-R10MB"
-        }
-      },
-      "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
-        },
-        "step" : {
-          "limit" : {
-            "concurrency" : 80,
-            "time" : RUN_TIME
-          }
-        },
-        "type" : "read"
       }
     })
     .run();
 
 var cmd_11 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_11.waitFor();
 
-var step_13 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 80
+          },
+          "id" : "MAX-R100MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "100MB",
@@ -451,38 +409,31 @@ var step_13 = ReadLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-R100MB"
-        }
-      },
-      "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
-        },
-        "step" : {
-          "limit" : {
-            "concurrency" : 80,
-            "time" : RUN_TIME
-          }
-        },
-        "type" : "read"
       }
     })
     .run();
 
 var cmd_12 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_12.waitFor();
 
-var step_14 = ReadLoad
+ReadLoad
     .config(parentConfig_1)
     .config({
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME,
+            "concurrency" : 80
+          },
+          "id" : "MAX-R200MB"
+        }
+      },
       "item" : {
         "data" : {
           "size" : "200MB",
@@ -492,31 +443,12 @@ var step_14 = ReadLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W200MB/items.csv"
         }
-      },
-      "storage" : {
-        "auth" : {
-          "uid" : "MAX-R200MB"
-        }
-      },
-      "load" : {
-        "generator" : {
-          "recycle" : {
-            "enabled" : true
-          }
-        },
-        "step" : {
-          "limit" : {
-            "concurrency" : 80,
-            "time" : RUN_TIME
-          }
-        },
-        "type" : "read"
       }
     })
     .run();
 
 var cmd_13 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "sleep ${WAIT_TIME}")
+    .command("/bin/sh", "-c", "sleep ${WAIT_TIME}")
     .inheritIO()
     .start();
 cmd_13.waitFor();

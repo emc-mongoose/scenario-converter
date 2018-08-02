@@ -30,14 +30,14 @@ var parentConfig_1 = {
 
     for( var i = 1; i < 5; i += 1 ){
     var parentConfig_2 = {
-      "storage" : {
-        "auth" : {
-          "uid" : "LONGEVITY-" + "iteration" + ""
+      "load" : {
+        "step" : {
+          "id" : "LONGEVITY-" + "iteration" + ""
         }
       }
     };
 
-        var step_1 = Load
+        Load
             .config(parentConfig_1)
             .config(parentConfig_2)
             .run();

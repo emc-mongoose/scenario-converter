@@ -23,10 +23,8 @@ public class ConfigConverter {
 	static {
 		try {
 			params = Files.lines(
-				Paths.get(Paths.get("")
-					.toAbsolutePath()
-					.toString() + "/build/resources/main/configChanging")).filter(s -> ! s.isEmpty())
-				.collect(Collectors.toMap(k -> k.split("\\s+")[0], v -> v.split("\\s+")[1]));
+				Paths.get(Paths.get("").toAbsolutePath().toString() + "/build/resources/main/configChanging")).filter(
+				s -> ! s.isEmpty()).collect(Collectors.toMap(k -> k.split("\\s+")[0], v -> v.split("\\s+")[1]));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -36,10 +34,9 @@ public class ConfigConverter {
 		String str = null;
 		try {
 			final Map<String, Object> map =
-				new ObjectMapper()
-					.configure(JsonParser.Feature.ALLOW_COMMENTS, true)
-					.configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true)
-					.readValue(oldConfig, new TypeReference<Map<String, Object>>() {
+				new ObjectMapper().configure(JsonParser.Feature.ALLOW_COMMENTS, true).configure(
+					JsonParser.Feature.ALLOW_YAML_COMMENTS, true).readValue(
+					oldConfig, new TypeReference<Map<String, Object>>() {
 					});
 			str = convertConfigAndToJson(map);
 		} catch(IOException e) {
@@ -94,6 +91,9 @@ public class ConfigConverter {
 		} else {
 			final String key = keys.remove(0);
 			deleteSection(keys, (Map<String, Object>) tree.get(key));
+			if(((Map<String, Object>) tree.get(key)).isEmpty()) {
+				tree.remove(key);
+			}
 		}
 	}
 
@@ -138,6 +138,9 @@ public class ConfigConverter {
 	}
 
 	public static String mapToStr(final Map<String, Object> map) {
+		if(map == null) {
+			return null;
+		}
 		String str = null;
 		try {
 			str =
@@ -160,7 +163,9 @@ public class ConfigConverter {
 	public static Map pullLoadStepSection(final Map config) {
 		final List keys = new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP));
 		final Map section = (Map) getValuesFromSection(keys, config);
-		deleteSection(keys, config);
+		if(section != null) {
+			deleteSection(keys, config);
+		}
 		return section;
 	}
 
