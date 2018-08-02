@@ -50,8 +50,12 @@ PreconditionLoad
 WeightedLoad
     .config(parentConfig_1)
     .config({
-      "limit" : {
-        "time" : "90s"
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : "90s"
+          }
+        }
       }
     })
     .append({

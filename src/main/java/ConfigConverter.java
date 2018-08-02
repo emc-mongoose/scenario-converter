@@ -89,8 +89,9 @@ public class ConfigConverter {
 		if(keys.size() == 1) {
 			tree.remove(keys.get(0));
 		} else {
-			final String key = keys.remove(0);
-			deleteSection(keys, (Map<String, Object>) tree.get(key));
+			final List<String> keyss = new ArrayList<>(keys);
+			final String key = keyss.remove(0);
+			deleteSection(keyss, (Map<String, Object>) tree.get(key));
 			if(((Map<String, Object>) tree.get(key)).isEmpty()) {
 				tree.remove(key);
 			}
@@ -162,10 +163,13 @@ public class ConfigConverter {
 
 	public static Map pullLoadStepSection(final Map config) {
 		final List keys = new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP));
-		final Map section = (Map) getValuesFromSection(keys, config);
-		if(section != null) {
-			deleteSection(keys, config);
+		final Map values = (Map) getValuesFromSection(keys, config);
+		if(values == null) {
+			return null;
 		}
+		deleteSection(keys, config);
+		final Map section = new HashMap();
+		setValuesIntoSection(keys, values, section);
 		return section;
 	}
 

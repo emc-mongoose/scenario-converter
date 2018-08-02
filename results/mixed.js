@@ -18,9 +18,13 @@ PreconditionLoad
 
 WeightedLoad
     .config({
-      "limit" : {
-        "time" : 60,
-        "concurrency" : 20
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : 60,
+            "concurrency" : 20
+          }
+        }
       }
     })
     .append({
