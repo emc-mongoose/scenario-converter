@@ -77,10 +77,12 @@ public class ConfigConverter {
 		for(String k : params.keySet()) {
 			final List oldParams = new ArrayList<>(Arrays.asList(k.split(Constants.PARAM_DELIMITER)));
 			final List newParams = new ArrayList<>(Arrays.asList(params.get(k).split(Constants.PARAM_DELIMITER)));
-			final Object values = getValuesFromSection(oldParams, tree);
-			if(values != null) {
-				setValuesIntoSection(newParams, values, newTree);
-				deleteSection(oldParams, newTree);
+			for (Map<String, Object> t : Arrays.asList(tree,newTree)) {
+				final Object values = getValuesFromSection(oldParams, t);
+				if(values != null) {
+					setValuesIntoSection(newParams, values, newTree);
+					deleteSection(oldParams, newTree);
+				}
 			}
 		}
 	}

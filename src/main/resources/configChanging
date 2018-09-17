@@ -1,11 +1,10 @@
 test-step           load-step
 test-scenario       run-scenario
-load-limit          load-step-limit
-load-threads		load-step-limit-concurrency
 run                 load-step
 storage-node 	 	storage-net-node
 storage-auth-id     storage-auth-uid
-
+load-limit          load-step-limit
+load-threads		storage-driver-limit-concurrency
 load-generator-recycle-enabled  load-op-recycle
 load-generator-recycle-limit	load-op-limit-recyce
 load-generator-shuffle	        load-op-shuffle
