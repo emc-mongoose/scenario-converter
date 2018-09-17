@@ -1,5 +1,4 @@
 PipelineLoad
-    .config({ })
     .append({
       "item" : {
         "output" : {
@@ -9,12 +8,16 @@ PipelineLoad
     })
     .append({
       "load" : {
-        "type" : "read"
+        "op" : {
+          "type" : "read"
+        }
       }
     })
     .append({
       "load" : {
-        "type" : "update"
+        "op" : {
+          "type" : "update"
+        }
       },
       "item" : {
         "data" : {
@@ -26,7 +29,9 @@ PipelineLoad
     })
     .append({
       "load" : {
-        "type" : "read"
+        "op" : {
+          "type" : "read"
+        }
       },
       "item" : {
         "data" : {
@@ -36,12 +41,16 @@ PipelineLoad
     })
     .append({
       "load" : {
-        "type" : "delete"
+        "op" : {
+          "type" : "delete"
+        }
       }
     })
     .append({
       "load" : {
-        "type" : "noop"
+        "op" : {
+          "type" : "noop"
+        }
       }
     })
     .run();

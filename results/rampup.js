@@ -40,62 +40,53 @@ var parentConfig_1 = {
       }
     };
 
-        var step_1 = CreateLoad
+        CreateLoad
             .config(parentConfig_1)
             .config(parentConfig_2)
             .config({
+              "load" : {
+                "step" : {
+                  "id" : "C" + threads + "_" + size + ""
+                }
+              },
               "item" : {
                 "output" : {
                   "file" : "" + size + "_" + threads + "threads.csv"
                 }
-              },
-              "storage" : {
-                "auth" : {
-                  "uid" : "C" + threads + "_" + size + ""
-                }
-              },
-              "load" : {
-                "type" : "create"
               }
             })
             .run();
 
-        var step_2 = ReadLoad
+        ReadLoad
             .config(parentConfig_1)
             .config(parentConfig_2)
             .config({
+              "load" : {
+                "step" : {
+                  "id" : "R" + threads + "_" + size + ""
+                }
+              },
               "item" : {
                 "input" : {
                   "file" : "" + size + "_" + threads + "threads.csv"
                 }
-              },
-              "storage" : {
-                "auth" : {
-                  "uid" : "R" + threads + "_" + size + ""
-                }
-              },
-              "load" : {
-                "type" : "read"
               }
             })
             .run();
 
-        var step_3 = DeleteLoad
+        DeleteLoad
             .config(parentConfig_1)
             .config(parentConfig_2)
             .config({
+              "load" : {
+                "step" : {
+                  "id" : "D" + threads + "_" + size + ""
+                }
+              },
               "item" : {
                 "input" : {
                   "file" : "" + size + "_" + threads + "threads.csv"
                 }
-              },
-              "storage" : {
-                "auth" : {
-                  "uid" : "D" + threads + "_" + size + ""
-                }
-              },
-              "load" : {
-                "type" : "delete"
               }
             })
             .run();

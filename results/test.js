@@ -1,16 +1,16 @@
 var cmd_1 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "rm $ITEM_INPUT_FILE")
+    .command("/bin/sh", "-c", "rm $ITEM_INPUT_FILE")
     .inheritIO()
     .start();
 cmd_1.waitFor();
 
 var cmd_2 = new java.lang.ProcessBuilder()
-    .command("sh", "-c", "export ITEM_INPUT_FILE=10K_items.csv")
+    .command("/bin/sh", "-c", "export ITEM_INPUT_FILE=10K_items.csv")
     .inheritIO()
     .start();
 cmd_2.waitFor();
 
-var step_1 = PreconditionLoad
+PreconditionLoad
     .config({
       "load" : {
         "step" : {
@@ -28,14 +28,11 @@ var step_1 = PreconditionLoad
     .run();
 
 function func1() {
-    var step_2 = ReadLoad
+    ReadLoad
         .config({
           "load" : {
-            "type" : "read",
-            "generator" : {
-              "recycle" : {
-                "enabled" : true
-              }
+            "op" : {
+              "recycle" : true
             }
           },
           "item" : {
@@ -52,7 +49,7 @@ function func2() {
     var itemSize_seq = ["10KB", "1MB", "100MB"];
     for each (itemSize in itemSize_seq){
         var cmd_3 = new java.lang.ProcessBuilder()
-            .command("sh", "-c", "echo " + itemSize + "")
+            .command("/bin/sh", "-c", "echo " + itemSize + "")
             .inheritIO()
             .start();
         cmd_3.waitFor();
@@ -60,18 +57,18 @@ function func2() {
         var concurrencyLimit_seq = [1, 10, 100];
         for each (concurrencyLimit in concurrencyLimit_seq){
             var cmd_4 = new java.lang.ProcessBuilder()
-                .command("sh", "-c", "echo " + concurrencyLimit + "")
+                .command("/bin/sh", "-c", "echo " + concurrencyLimit + "")
                 .inheritIO()
                 .start();
             cmd_4.waitFor();
 
-            var step_3 = Load
+            Load
                 .config({
                   "load" : {
                     "step" : {
                       "limit" : {
-                        "concurrency" : concurrencyLimit,
-                        "time" : "20s"
+                        "time" : "20s",
+                        "concurrency" : concurrencyLimit
                       }
                     }
                   },
