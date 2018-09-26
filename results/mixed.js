@@ -1,7 +1,7 @@
 PreconditionLoad
     .config({
       "load" : {
-        "step" : {
+        "op" : {
           "limit" : {
             "count" : 1000
           }
@@ -21,8 +21,7 @@ WeightedLoad
       "load" : {
         "step" : {
           "limit" : {
-            "time" : 60,
-            "concurrency" : 20
+            "time" : 60
           }
         }
       }
@@ -31,6 +30,13 @@ WeightedLoad
       "item" : {
         "output" : {
           "path" : "default"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 20
+          }
         }
       }
     })

@@ -14,9 +14,13 @@ var parentConfig_1 = {
     }
   },
   "load" : {
+    "op" : {
+      "limit" : {
+        "count" : 1000000
+      }
+    },
     "step" : {
       "limit" : {
-        "count" : 1000000,
         "time" : "10s"
       }
     }
@@ -26,16 +30,16 @@ var parentConfig_1 = {
     var threads_seq = [1, 10, 100];
     for each (threads in threads_seq){
     var parentConfig_2 = {
-      "load" : {
-        "step" : {
-          "limit" : {
-            "concurrency" : threads
-          }
-        }
-      },
       "item" : {
         "output" : {
           "path" : "" + size + "_" + threads + "threads"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : threads
+          }
         }
       }
     };

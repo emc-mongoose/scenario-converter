@@ -15,11 +15,14 @@ PreconditionLoad
     .config(parentConfig_1)
     .config({
       "load" : {
+        "op" : {
+          "limit" : {
+            "count" : 10000
+          }
+        },
         "step" : {
           "limit" : {
-            "count" : 10000,
-            "time" : INIT_RUN_TIME,
-            "concurrency" : 40
+            "time" : INIT_RUN_TIME
           }
         }
       },
@@ -31,6 +34,13 @@ PreconditionLoad
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/init.csv"
         }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 40
+          }
+        }
       }
     })
     .run();
@@ -40,14 +50,15 @@ PreconditionLoad
     .config({
       "load" : {
         "op" : {
+          "limit" : {
+            "count" : 10000
+          },
           "recycle" : true,
           "type" : "read"
         },
         "step" : {
           "limit" : {
-            "count" : 10000,
-            "time" : INIT_RUN_TIME,
-            "concurrency" : 40
+            "time" : INIT_RUN_TIME
           }
         }
       },
@@ -58,6 +69,13 @@ PreconditionLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/init.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 40
+          }
         }
       }
     })
@@ -72,15 +90,6 @@ cmd_1.waitFor();
 Load
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 320
-          },
-          "id" : "MAX-W10KB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "10KB"
@@ -88,6 +97,21 @@ Load
         "output" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10KB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 320
+          }
+        }
+      },
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-W10KB"
         }
       }
     })
@@ -102,15 +126,6 @@ cmd_2.waitFor();
 Load
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 320
-          },
-          "id" : "MAX-W100KB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "100KB"
@@ -118,6 +133,21 @@ Load
         "output" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100KB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 320
+          }
+        }
+      },
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-W100KB"
         }
       }
     })
@@ -132,15 +162,6 @@ cmd_3.waitFor();
 Load
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 160
-          },
-          "id" : "MAX-W1MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "1MB"
@@ -148,6 +169,21 @@ Load
         "output" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W1MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 160
+          }
+        }
+      },
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-W1MB"
         }
       }
     })
@@ -162,15 +198,6 @@ cmd_4.waitFor();
 Load
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          },
-          "id" : "MAX-W10MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "10MB"
@@ -178,6 +205,21 @@ Load
         "output" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 80
+          }
+        }
+      },
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-W10MB"
         }
       }
     })
@@ -192,15 +234,6 @@ cmd_5.waitFor();
 Load
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          },
-          "id" : "MAX-W100MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "100MB"
@@ -208,6 +241,21 @@ Load
         "output" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 80
+          }
+        }
+      },
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-W100MB"
         }
       }
     })
@@ -222,15 +270,6 @@ cmd_6.waitFor();
 Load
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          },
-          "id" : "MAX-W200MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "200MB"
@@ -238,6 +277,21 @@ Load
         "output" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W200MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 80
+          }
+        }
+      },
+      "load" : {
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-W200MB"
         }
       }
     })
@@ -252,18 +306,6 @@ cmd_7.waitFor();
 ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "op" : {
-          "recycle" : true
-        },
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 320
-          },
-          "id" : "MAX-R10KB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "10KB",
@@ -272,6 +314,24 @@ ReadLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10KB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 320
+          }
+        }
+      },
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-R10KB"
         }
       }
     })
@@ -286,18 +346,6 @@ cmd_8.waitFor();
 ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "op" : {
-          "recycle" : true
-        },
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 320
-          },
-          "id" : "MAX-R100KB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "100KB",
@@ -306,6 +354,24 @@ ReadLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100KB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 320
+          }
+        }
+      },
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-R100KB"
         }
       }
     })
@@ -320,18 +386,6 @@ cmd_9.waitFor();
 ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "op" : {
-          "recycle" : true
-        },
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 160
-          },
-          "id" : "MAX-R1MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "1MB",
@@ -340,6 +394,24 @@ ReadLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W1MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 160
+          }
+        }
+      },
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-R1MB"
         }
       }
     })
@@ -354,18 +426,6 @@ cmd_10.waitFor();
 ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "op" : {
-          "recycle" : true
-        },
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          },
-          "id" : "MAX-R10MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "10MB",
@@ -374,6 +434,24 @@ ReadLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W10MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 80
+          }
+        }
+      },
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-R10MB"
         }
       }
     })
@@ -388,18 +466,6 @@ cmd_11.waitFor();
 ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "op" : {
-          "recycle" : true
-        },
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          },
-          "id" : "MAX-R100MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "100MB",
@@ -408,6 +474,24 @@ ReadLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W100MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 80
+          }
+        }
+      },
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-R100MB"
         }
       }
     })
@@ -422,18 +506,6 @@ cmd_12.waitFor();
 ReadLoad
     .config(parentConfig_1)
     .config({
-      "load" : {
-        "op" : {
-          "recycle" : true
-        },
-        "step" : {
-          "limit" : {
-            "time" : RUN_TIME,
-            "concurrency" : 80
-          },
-          "id" : "MAX-R200MB"
-        }
-      },
       "item" : {
         "data" : {
           "size" : "200MB",
@@ -442,6 +514,24 @@ ReadLoad
         "input" : {
           "path" : "" + BUCKET + "",
           "file" : "" + MONGOOSE_DIR + "/log/MAX-W200MB/items.csv"
+        }
+      },
+      "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 80
+          }
+        }
+      },
+      "load" : {
+        "op" : {
+          "recycle" : true
+        },
+        "step" : {
+          "limit" : {
+            "time" : RUN_TIME
+          },
+          "id" : "MAX-R200MB"
         }
       }
     })

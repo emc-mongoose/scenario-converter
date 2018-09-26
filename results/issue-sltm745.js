@@ -10,7 +10,10 @@ var parentConfig_1 = {
   },
   "storage" : {
     "driver" : {
-      "type" : "s3"
+      "type" : "s3",
+      "limit" : {
+        "concurrency" : 1000
+      }
     },
     "net" : {
       "http" : {
@@ -19,10 +22,9 @@ var parentConfig_1 = {
     }
   },
   "load" : {
-    "step" : {
+    "op" : {
       "limit" : {
-        "count" : 100000,
-        "concurrency" : 1000
+        "count" : 100000
       }
     }
   }

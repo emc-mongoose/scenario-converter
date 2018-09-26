@@ -11,7 +11,10 @@ Load
       },
       "storage" : {
         "driver" : {
-          "type" : "s3"
+          "type" : "s3",
+          "limit" : {
+            "concurrency" : 10
+          }
         },
         "auth" : {
           "uid" : "user-%d(314159265){00}[0-99]",
@@ -19,10 +22,9 @@ Load
         }
       },
       "load" : {
-        "step" : {
+        "op" : {
           "limit" : {
-            "count" : 10000,
-            "concurrency" : 10
+            "count" : 10000
           }
         }
       }

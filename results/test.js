@@ -13,7 +13,7 @@ cmd_2.waitFor();
 PreconditionLoad
     .config({
       "load" : {
-        "step" : {
+        "op" : {
           "limit" : {
             "count" : 10000
           }
@@ -67,14 +67,20 @@ function func2() {
                   "load" : {
                     "step" : {
                       "limit" : {
-                        "time" : "20s",
-                        "concurrency" : concurrencyLimit
+                        "time" : "20s"
                       }
                     }
                   },
                   "item" : {
                     "data" : {
                       "size" : itemSize
+                    }
+                  },
+                  "storage" : {
+                    "driver" : {
+                      "limit" : {
+                        "concurrency" : concurrencyLimit
+                      }
                     }
                   }
                 })

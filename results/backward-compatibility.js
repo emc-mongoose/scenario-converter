@@ -1,15 +1,21 @@
 Load
     .config({
       "load" : {
-        "step" : {
+        "op" : {
           "limit" : {
-            "count" : 100,
-            "concurrency" : 10
-          },
+            "count" : 100
+          }
+        },
+        "step" : {
           "id" : "backward-compatibility-test"
         }
       },
       "storage" : {
+        "driver" : {
+          "limit" : {
+            "concurrency" : 10
+          }
+        },
         "net" : {
           "node" : {
             "addrs" : new java.util.ArrayList([ "127.0.0.1" ])

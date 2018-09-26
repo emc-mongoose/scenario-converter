@@ -1,14 +1,14 @@
 var parentConfig_1 = {
-  "load" : {
-    "step" : {
-      "limit" : {
-        "concurrency" : 100
-      }
-    }
-  },
   "item" : {
     "output" : {
       "path" : "/weighted-load"
+    }
+  },
+  "storage" : {
+    "driver" : {
+      "limit" : {
+        "concurrency" : 100
+      }
     }
   }
 };
@@ -38,7 +38,7 @@ PreconditionLoad
         }
       },
       "load" : {
-        "step" : {
+        "op" : {
           "limit" : {
             "count" : 10000
           }
@@ -60,7 +60,7 @@ WeightedLoad
     })
     .append({
       "load" : {
-        "op" : {
+        "generator" : {
           "weight" : 20
         }
       },
@@ -74,7 +74,9 @@ WeightedLoad
       "load" : {
         "op" : {
           "recycle" : true,
-          "type" : "read",
+          "type" : "read"
+        },
+        "generator" : {
           "weight" : 80
         }
       },

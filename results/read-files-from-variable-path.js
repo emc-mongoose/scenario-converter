@@ -6,14 +6,16 @@ var parentConfig_1 = {
   },
   "storage" : {
     "driver" : {
-      "type" : "fs"
+      "type" : "fs",
+      "limit" : {
+        "concurrency" : 10
+      }
     }
   },
   "load" : {
-    "step" : {
+    "op" : {
       "limit" : {
-        "count" : 10000,
-        "concurrency" : 10
+        "count" : 10000
       }
     }
   }
