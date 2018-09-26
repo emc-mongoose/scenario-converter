@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir results
 java -jar build/libs/converter-1.0.jar example/scenario/json/misc/issue-sltm745.json > results/issue-sltm745.js 
 java -jar build/libs/converter-1.0.jar example/scenario/json/misc/rampup.json > results/rampup.js 
 java -jar build/libs/converter-1.0.jar example/scenario/json/misc/backward-compatibility.json > results/backward-compatibility.js 
