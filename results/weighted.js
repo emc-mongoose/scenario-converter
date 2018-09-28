@@ -60,7 +60,7 @@ WeightedLoad
     })
     .append({
       "load" : {
-        "generator" : {
+        "op" : {
           "weight" : 20
         }
       },
@@ -74,9 +74,7 @@ WeightedLoad
       "load" : {
         "op" : {
           "recycle" : true,
-          "type" : "read"
-        },
-        "generator" : {
+          "type" : "read",
           "weight" : 80
         }
       },

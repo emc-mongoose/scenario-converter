@@ -45,7 +45,7 @@ public class ConfigConverter {
 		return str;
 	}
 
-	public static Map<String, Object> convertConfig(final Map<String, Object> oldConfig) {
+	static Map<String, Object> convertConfig(final Map<String, Object> oldConfig) {
 		final Map<String, Object> newConfig = TreeUtil.copyTree(oldConfig);
 		convert(oldConfig, newConfig);
 		return newConfig;
@@ -62,21 +62,21 @@ public class ConfigConverter {
 		return result;
 	}
 
-	public static String pullLoadType(final Map<String, Object> config) {
-		final List keys = new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_TYPE));
+	static String pullLoadType(final Map<String, Object> config) {
+		final List<String> keys = new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_TYPE));
 		final String type = (String) getValuesFromSection(keys, config);
 		if(type != null) {
 			deleteSection(keys, config);
 			return type;
 		} else {
-			return new String();
+			return "";
 		}
 	}
 
 	private static void convert(final Map<String, Object> tree, final Map<String, Object> newTree) {
 		for(String k : params.keySet()) {
-			final List oldParams = new ArrayList<>(Arrays.asList(k.split(Constants.PARAM_DELIMITER)));
-			final List newParams = new ArrayList<>(Arrays.asList(params.get(k).split(Constants.PARAM_DELIMITER)));
+			final List<String> oldParams = new ArrayList<>(Arrays.asList(k.split(Constants.PARAM_DELIMITER)));
+			final List<String> newParams = new ArrayList<>(Arrays.asList(params.get(k).split(Constants.PARAM_DELIMITER)));
 			for (Map<String, Object> t : Arrays.asList(tree,newTree)) {
 				final Object values = getValuesFromSection(oldParams, t);
 				if(values != null) {
@@ -136,11 +136,11 @@ public class ConfigConverter {
 		return value;
 	}
 
-	public static String convertConfigAndToJson(final Map<String, Object> oldConfig) {
+	static String convertConfigAndToJson(final Map<String, Object> oldConfig) {
 		return mapToStr(convertConfig(oldConfig));
 	}
 
-	public static String mapToStr(final Map<String, Object> map) {
+	private static String mapToStr(final Map<String, Object> map) {
 		if(map == null) {
 			return null;
 		}
@@ -155,27 +155,27 @@ public class ConfigConverter {
 		return str;
 	}
 
-	public static Map addWeight(final Map config, final Object weight) {
-		final Map newConfig = config;
-		final Map w = new HashMap();
+	static Map<String, Object> addWeight(final Map<String, Object> config, final Object weight) {
+		final Map<String, Object> newConfig = config;
+		final Map<String, Object> w = new HashMap<>();
 		w.put(Constants.KEY_WEIGHT, weight);
 		setValuesIntoSection(new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_GENERATOR)), w, newConfig);
 		return newConfig;
 	}
 
-	public static Map pullLoadStepSection(final Map config) {
-		final List keys = new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP));
+	private static Map<String, Object> pullLoadStepSection(final Map config) {
+		final List<String> keys = new ArrayList<>(Arrays.asList(Constants.KEY_LOAD, Constants.KEY_STEP));
 		final Map values = (Map) getValuesFromSection(keys, config);
 		if(values == null) {
 			return null;
 		}
 		deleteSection(keys, config);
-		final Map section = new HashMap();
+		final Map<String, Object> section = new HashMap<String, Object>();
 		setValuesIntoSection(keys, values, section);
 		return section;
 	}
 
-	public static String pullLoadStepSectionStr(final Map config) {
+	static String pullLoadStepSectionStr(final Map config) {
 		return mapToStr(pullLoadStepSection(config));
 	}
 }

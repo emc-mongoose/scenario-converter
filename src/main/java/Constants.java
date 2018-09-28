@@ -39,7 +39,8 @@ public interface Constants {
     String KEY_WEIGHT = "weight";
 
     String PARAM_DELIMITER = "-";
-    String VAR_PATTERN = "\\$\\{%s\\}";
+    String BRACKETS_PATTERN = "\\$\\{%s\\}";
+	//String VAR_PATTERN_WIT = "\\$\\{%s\\}";
     String WITHOUT_SPACES_PATTERN = "([\\w\\-_.!@#%\\^&*=+()\\[\\]~:;'\\\\|/<>,?]+)";
     String QUOTES_PATTERN = "\"%s\"(?!( :))";
     String TAB = "    ";

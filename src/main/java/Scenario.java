@@ -60,7 +60,7 @@ class Scenario {
     }
 
     private void extractEnvVariables(final String str) {
-        final Pattern pattern = Pattern.compile(String.format(Constants.VAR_PATTERN, Constants.WITHOUT_SPACES_PATTERN));
+        final Pattern pattern = Pattern.compile(String.format(Constants.BRACKETS_PATTERN, Constants.WITHOUT_SPACES_PATTERN));
         final Matcher matcher = pattern.matcher((String) str);
         while (matcher.find()) {
             String tmp = matcher.group(0).replaceAll("\\{|\\}|\\$", "");

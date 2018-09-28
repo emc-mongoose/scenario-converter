@@ -34,7 +34,7 @@ var parentConfig_1 = {
     var parentConfig_2 = {
       "load" : {
         "step" : {
-          "id" : "LONGEVITY-" + "iteration" + ""
+          "id" : "LONGEVITY-" + iteration + ""
         }
       }
     };
