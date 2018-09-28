@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,7 +16,7 @@ class ScenarioConverter {
 	public static void print(final Scenario scenario) {
 		oldScenario = scenario;
 		final Map<String, Object> tree = oldScenario.getStepTree();
-		replaceVariables(tree);
+		//addConcat(tree);
 		replaceJobsOnSteps(tree);
 		print("", tree, new ArrayList<>());
 	}
@@ -32,12 +31,12 @@ class ScenarioConverter {
 				}
 				break;
 				case Constants.STEP_TYPE_CHAIN: {
-					final String str = createPipelineLoad(tab, (List) tree.get(Constants.KEY_CONFIG), parentConfig);
+					final String str = createPipelineLoadStep(tab, (List) tree.get(Constants.KEY_CONFIG), parentConfig);
 					System.out.print(str + "\n\n");
 				}
 				break;
 				case Constants.STEP_TYPE_MIXED: {
-					final String str = createWeightedLoad(tab, tree, parentConfig);
+					final String str = createWeightedLoadStep(tab, tree, parentConfig);
 					System.out.print(str + "\n\n");
 				}
 				break;
@@ -94,18 +93,18 @@ class ScenarioConverter {
 				break;
 				case Constants.STEP_TYPE_LOAD: {
 					final String str =
-						createStepLoad(tab, (Map<String, Object>) tree.get(Constants.KEY_CONFIG), parentConfig, false);
+						createLoadStep(tab, (Map<String, Object>) tree.get(Constants.KEY_CONFIG), parentConfig, false);
 					System.out.print(str + "\n\n");
 				}
 				break;
 				case Constants.STEP_TYPE_PRECONDITION: {
 					final String str =
-						createStepLoad(tab, (Map<String, Object>) tree.get(Constants.KEY_CONFIG), parentConfig, true);
+						createLoadStep(tab, (Map<String, Object>) tree.get(Constants.KEY_CONFIG), parentConfig, true);
 					System.out.print(str + "\n\n");
 				}
 				break;
 				default:
-					System.out.println(tab + "<" + tree.get(key) + ">");
+					throw new IllegalArgumentException("Unknown key " + key);
 			}
 		}
 	}
@@ -124,7 +123,112 @@ class ScenarioConverter {
 		}
 	}
 
-	private static String createWeightedLoad(
+	private static String createConfigs(
+		final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig, final List weights
+	) {
+		//parent config
+		StringBuilder strBuilder = new StringBuilder();
+		for(String configName : parentConfig) {
+			strBuilder.append(tab).append(".config(").append(configName).append(")\n");
+		}
+		StringBuilder str = new StringBuilder(strBuilder.toString());
+		//common config
+		for(int i = 0; i < configs.size(); ++ i) {
+			if(i == 0) {
+				final String loadStepSection = pullLoadSection(tab, configs.get(i));
+				if(loadStepSection != null) {
+					str.append(tab).append(".config(").append(loadStepSection).append(")\n");
+				}
+			}
+			//substep config
+			if(weights != null) {
+				str.append(tab).append(".append(").append(convertConfig(tab, configs.get(i), weights.get(i))).append(
+					")\n");
+			} else {
+				str.append(tab).append(".append(").append(convertConfig(tab, configs.get(i))).append(")\n");
+			}
+		}
+		return str.toString();
+	}
+
+	private static String convertConfig(final String tab, final Map<String, Object> map) {
+		addConcat(map);
+		String str = ConfigConverter.convertConfigAndToJson(map);
+		str = str.replaceAll("\\n", "\n" + tab);
+		str = removeQuotesAndBrackets(str);
+		return str;
+	}
+
+	private static String convertConfig(final String tab, final Map<String, Object> map, final Object weight) {
+		final Map config = ConfigConverter.addWeight(ConfigConverter.convertConfig(map), weight);
+		return convertConfig(tab, config);
+	}
+
+	private static void createAndPrintParentConfig(final String tab, final Object tree, final List parentConfig) {
+		if(! ((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG)) {
+			return;
+		}
+		final Object config = ((Map<String, Object>) tree).get(Constants.KEY_CONFIG);
+		final String str = createParentConfig(tab, (Map<String, Object>) config);
+		parentConfig.add("parentConfig_" + parentConfigCounter);
+		System.out.print(str + "\n\n");
+	}
+
+	private static String createParentConfig(final String tab, final Map<String, Object> config) {
+		return tab + "var parentConfig_" + parentConfigCounter.incrementAndGet() + " = " + convertConfig(tab, config) +
+			";";
+	}
+
+	private static void createParallelFunction(final String tab, final Object step, final List<String> parentConfig) {
+		System.out.print(tab + "function func" + (parallelCounter.incrementAndGet()) + "() {\n");
+		print(tab + Constants.TAB, (Map<String, Object>) step, parentConfig);
+		System.out.println(tab + "};\n");
+	}
+
+	private static String createParallelSteps(final String tab, final int stepCount) {
+		StringBuilder str = new StringBuilder(tab + Constants.THREAD_TYPE_FORMAT);
+		for(int s = 1; s <= stepCount; ++ s) {
+			str.append(String.format(Constants.NEW_THREAD_FORMAT, tab, s, s, tab, s));
+		}
+		for(int s = 1; s <= stepCount; ++ s) {
+			str.append(String.format(Constants.JOIN_FORMAT, tab, s));
+		}
+		return str.toString();
+	}
+
+	private static void addConcat(final Map<String, Object> tree) {
+		for(String key : tree.keySet()) {
+			if(key.equals(Constants.KEY_TYPE) && tree.get(key).equals(Constants.STEP_TYPE_COMMAND)) {
+				break;
+			} else if(tree.get(key) instanceof String) {
+				for(String var : oldScenario.getAllVarList()) {
+					if(key.equals(Constants.KEY_FILE) || key.equals(Constants.KEY_PATH) ||
+						key.equals(Constants.KEY_ID)) {
+						final String varWithBrackets = String.format(Constants.BRACKETS_PATTERN, var);
+						tree.replace(key, ((String) tree.get(key)).replaceAll(
+							varWithBrackets,
+							"\" + " + varWithBrackets + " + \""
+						));
+					}
+				}
+			} else if(tree.get(key) instanceof Map) {
+				addConcat((Map<String, Object>) tree.get(key));
+			}
+		}
+	}
+
+	private static String createSeqVariable(final String varName, final List seq) {
+		String newSeq = seq.stream()
+						   .map(s -> (s instanceof String && ! oldScenario.getAllVarList().contains(s))
+									 ? String.format("\"%s\"", s)
+									 : s
+						   )
+						   .collect(Collectors.toList())
+						   .toString();
+		return "var " + varName + Constants.SEQ_POSTFIX + " = " + newSeq + ";";
+	}
+
+	private static String createWeightedLoadStep(
 		final String tab, final Map<String, Object> tree, final List<String> parentConfig
 	) {
 		final List<Map<String, Object>> configsRaw = (List) tree.get(Constants.KEY_CONFIG);
@@ -143,7 +247,7 @@ class ScenarioConverter {
 		return str;
 	}
 
-	private static String createPipelineLoad(
+	private static String createPipelineLoadStep(
 		final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig
 	) {
 		String str = tab + "PipelineLoad\n";
@@ -153,126 +257,15 @@ class ScenarioConverter {
 		return str;
 	}
 
-	private static String createConfigs(
-		final String tab, final List<Map<String, Object>> configs, final List<String> parentConfig, final List weights
-	) {
-		String str = new String();
-		//parent config
-		for(String configName : parentConfig) {
-			str += tab + ".config(" + configName + ")\n";
-		}
-		//common config
-		for(int i = 0; i < configs.size(); ++ i) {
-			if(i == 0) {
-				final String loadStepSection = pullLoadSection(tab, configs.get(i));
-				if(loadStepSection != null) {
-					str += tab + ".config(" + loadStepSection + ")\n";
-				}
-			}
-			//substep config
-			if(weights != null) {
-				str += tab + ".append(" + convertConfig(tab, configs.get(i), weights.get(i)) + ")\n";
-			} else {
-				str += tab + ".append(" + convertConfig(tab, configs.get(i)) + ")\n";
-			}
-		}
-		return str;
-	}
-
-	private static void createParallelFunction(final String tab, final Object step, final List<String> parentConfig) {
-		System.out.print(tab + "function func" + (parallelCounter.incrementAndGet()) + "() {\n");
-		print(tab + Constants.TAB, (Map<String, Object>) step, parentConfig);
-		System.out.println(tab + "};\n");
-	}
-
-	private static void createAndPrintParentConfig(final String tab, final Object tree, final List parentConfig) {
-		if(! ((Map<String, Object>) tree).containsKey(Constants.KEY_CONFIG)) {
-			return;
-		}
-		final Object config = ((Map<String, Object>) tree).get(Constants.KEY_CONFIG);
-		final String str = createParentConfig(tab, (Map<String, Object>) config);
-		parentConfig.add("parentConfig_" + parentConfigCounter);
-		System.out.print(str + "\n\n");
-	}
-
-	private static String createParentConfig(final String tab, final Map<String, Object> config) {
-		return tab + "var parentConfig_" + parentConfigCounter.incrementAndGet() + " = " + convertConfig(tab, config) +
-			";";
-	}
-
-	private static void replaceVariables(final Map<String, Object> tree) {
-		for(String key : tree.keySet()) {
-			if(key.equals(Constants.KEY_TYPE) && tree.get(key).equals(Constants.STEP_TYPE_COMMAND)) {
-				break;
-			} else if(tree.get(key) instanceof String) {
-				for(String var : oldScenario.getAllVarList()) {
-					if(key.equals(Constants.KEY_FILE) || key.equals(Constants.KEY_PATH) ||
-						key.equals(Constants.KEY_ID)) {
-						tree.replace(key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var),
-							"\" + " + var + " + \""
-						));
-						tree.replace(key, ((String) tree.get(key)).replaceAll(var, "\"" + var + "\""));
-					} else {
-						tree.replace(
-							key, ((String) tree.get(key)).replaceAll(String.format(Constants.VAR_PATTERN, var), var));
-					}
-				}
-			} else {
-				replaceVariables(tree.get(key));
-			}
-		}
-	}
-
-	private static void replaceVariables(final List<Object> list) {
-		if(list.isEmpty()) {
-			return;
-		}
-		if(list.get(0) instanceof Map) {
-			for(Object item : list) {
-				replaceVariables((Map<String, Object>) item);
-			}
-		} else {
-			for(String var : oldScenario.getAllVarList()) {
-				Collections.replaceAll(list, String.format(Constants.VAR_FORMAT, var), var);
-			}
-		}
-	}
-
-	private static void replaceVariables(final Object o) {
-		if(o instanceof Map) {
-			replaceVariables((Map) o);
-		} else if(o instanceof List) {
-			replaceVariables((List) o);
-		}
-	}
-
 	private static String createCommandStep(final String tab, final String cmdLine) {
 		String newCmdLine = cmdLine;
 		newCmdLine = newCmdLine.replaceAll("\\\"", "'");
 		for(String var : oldScenario.getLoopVarList()) {
-			newCmdLine = newCmdLine.replaceAll(String.format(Constants.VAR_PATTERN, var), "\" + " + var + " + \"");
+			newCmdLine = newCmdLine.replaceAll(String.format(Constants.BRACKETS_PATTERN, var), "\" + " + var + " + \"");
 		}
 		final String varName = "cmd_" + cmdCounter.incrementAndGet();
 		return String.format(Constants.COMMAND_FORMAT, tab, cmdCounter.get(), tab, "\"" + newCmdLine + "\"", tab, tab) +
 			"\n" + tab + varName + ".waitFor();";
-	}
-
-	private static String createParallelSteps(final String tab, final int stepCount) {
-		String str = tab + Constants.THREAD_TYPE_FORMAT;
-		for(int s = 1; s <= stepCount; ++ s) {
-			str += String.format(Constants.NEW_THREAD_FORMAT, tab, s, s, tab, s);
-		}
-		for(int s = 1; s <= stepCount; ++ s) {
-			str += String.format(Constants.JOIN_FORMAT, tab, s);
-		}
-		return str;
-	}
-
-	private static String createSeqVariable(final String varName, final List seq) {
-		String newSeq = seq.stream().map(s -> {
-			return (s instanceof String && ! oldScenario.getAllVarList().contains(s)) ? String.format("\"%s\"", s) : s;
-		}).collect(Collectors.toList()).toString();
-		return "var " + varName + Constants.SEQ_POSTFIX + " = " + newSeq + ";";
 	}
 
 	private static String createForStep(final String tab, final String varName, final List seq) {
@@ -299,59 +292,54 @@ class ScenarioConverter {
 	private static String createForLine(
 		final String varName, final String startValue, final String endValue, final String step
 	) {
-		return String.format(Constants.FOR_FORMAT, varName, startValue, varName, endValue, varName, step);
+		return removeQuotesAndBrackets(
+			String.format(Constants.FOR_FORMAT, varName, startValue, varName, endValue, varName, step));
 	}
 
-	private static String createForStep(String tab) {
+	private static String createForStep(final String tab) {
 		return tab + Constants.WHILE_FORMAT;
 	}
 
-	private static String createStepLoad(
+	private static String createLoadStep(
 		final String tab, final Map<String, Object> config, final List<String> parentConfig,
 		final boolean isPrecondition
 	) {
-		String str = tab;
+		StringBuilder str = new StringBuilder(tab);
 		if(isPrecondition) {
-			str += "PreconditionLoad\n";
+			str.append("PreconditionLoad\n");
 		} else {
 			final String type = (config != null) ? ConfigConverter.pullLoadType(config) : "";
 			switch(type) {
 				case Constants.KEY_CREATE: {
-					str += "CreateLoad\n";
+					str.append("CreateLoad\n");
 				}
 				break;
 				case Constants.KEY_READ: {
-					str += "ReadLoad\n";
+					str.append("ReadLoad\n");
 				}
 				break;
 				case Constants.KEY_UPDATE: {
-					str += "UpdateLoad\n";
+					str.append("UpdateLoad\n");
 				}
 				break;
 				case Constants.KEY_DELETE: {
-					str += "DeleteLoad\n";
+					str.append("DeleteLoad\n");
 				}
 				break;
 				default: {
-					str += "Load\n";
+					str.append("Load\n");
 				}
 			}
 		}
 		for(String configName : parentConfig) {
-			str += tab + Constants.TAB + ".config(" + configName + ")\n";
+			str.append(tab).append(Constants.TAB).append(".config(").append(configName).append(")\n");
 		}
 		if(config != null) {
-			str += tab + Constants.TAB + ".config(" + convertConfig(tab + Constants.TAB, config) + ")\n";
+			str.append(tab).append(Constants.TAB).append(".config(").append(
+				convertConfig(tab + Constants.TAB, config)).append(")\n");
 		}
-		str += tab + Constants.TAB + ".run();";
-		return str;
-	}
-
-	private static String convertConfig(final String tab, final Map map) {
-		String str = ConfigConverter.convertConfigAndToJson(map);
-		str = str.replaceAll("\\n", "\n" + tab);
-		str = removeQuotes(str);
-		return str;
+		str.append(tab).append(Constants.TAB).append(".run();");
+		return str.toString();
 	}
 
 	private static String pullLoadSection(final String tab, final Map map) {
@@ -360,19 +348,16 @@ class ScenarioConverter {
 			return null;
 		}
 		str = str.replaceAll("\\n", "\n" + tab);
-		str = removeQuotes(str);
+		str = removeQuotesAndBrackets(str);
 		return str;
 	}
 
-	private static String convertConfig(final String tab, final Map<String, Object> map, final Object weight) {
-		final Map config = ConfigConverter.addWeight(ConfigConverter.convertConfig(map), weight);
-		return convertConfig(tab, config);
-	}
-
-	private static String removeQuotes(final String str) {
+	private static String removeQuotesAndBrackets(final String str) {
 		String tmp = str;
 		for(String var : oldScenario.getAllVarList()) {
-			tmp = tmp.replaceAll(String.format(Constants.QUOTES_PATTERN, var), var);
+			tmp = tmp.replaceAll(
+				String.format(Constants.QUOTES_PATTERN, String.format(Constants.BRACKETS_PATTERN, var)), var);
+			tmp = tmp.replaceAll(String.format(Constants.BRACKETS_PATTERN, var), var);
 		}
 		return tmp;
 	}
