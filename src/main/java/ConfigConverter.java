@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.akurilov.commons.collection.TreeUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,18 +15,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ConfigConverter {
 
-	private static Map<String, String> params;
+	private final static Map<String, String> params = new HashMap<>();
 
 	static {
-		try {
-			params = Files.lines(
-				Paths.get(Paths.get("").toAbsolutePath().toString() + "/build/resources/main/configChanging")).filter(
-				s -> ! s.isEmpty()).collect(Collectors.toMap(k -> k.split("\\s+")[0], v -> v.split("\\s+")[1]));
-		} catch(IOException e) {
+		try(
+			final InputStream in = ConfigConverter.class.getResource("configChanging").openStream();
+			final BufferedReader br = new BufferedReader(new InputStreamReader(in))
+		) {
+			String line;
+			while(null != (line = br.readLine())) {
+				if(!line.isEmpty()) {
+					final String[] lineParts = line.split("\\s+");
+					params.put(lineParts[0], lineParts[1]);
+				}
+			}
+		} catch(final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -124,7 +131,6 @@ public class ConfigConverter {
 		final List<String> keyss = new ArrayList<>(keys);
 		final String key = keyss.remove(0);
 		if(tree.keySet().contains(key)) {
-			final String p;
 			if(keyss.isEmpty()) {
 				value = tree.get(key);
 			} else {
