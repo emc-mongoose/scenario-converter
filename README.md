@@ -17,12 +17,19 @@ It takes into account the changes for the 4th Mongoose version and generates a n
 ### Limitation
 The converter doesn't support scenarios using mixedLoad-steps without weights, since in the new version of Mongoose there is no such step type.
 
-## Development
+## Jar
+
+### Download
+
+To download prepaired jar-file: `wget https://github.com/emc-mongoose/scenario-converter-3to4/releases/download/1.1/converter-1.1.jar`
+
+### Build 
   In order to build project, go to the 'converter' directory and type:
 ```bash
 ./gradlew makeJar
 ```
 Jar-file will have path '/converter/build/libs/converter-\<version\>.jar'.
+
 ## Usage
   For converting one scenario type:
 ```bash
