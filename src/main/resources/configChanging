@@ -6,7 +6,7 @@ test-step-name					load-step-id
 socket-timeoutMilliSec			storage-net-timeoutMilliSec
 storage-ssl						storage-net-ssl
 storage-httpHeaders				storage-net-http-headers
-storage-http-namespace			storage-net-http-namespace
+storage-http-namespace			storage-namespace
 storage-http-versioning			storage-net-http-versioning
 storage-node-addrs				storage-net-node-addrs
 storage-node-port				storage-net-node-port
