@@ -21,7 +21,7 @@ The converter doesn't support scenarios using mixedLoad-steps without weights, s
 
 ### Download
 
-To download prepaired jar-file: `wget https://github.com/emc-mongoose/scenario-converter-3to4/releases/download/1.1/converter-1.1.jar`
+To download prepaired jar-file: `wget https://github.com/emc-mongoose/scenario-converter-3to4/releases/download/1.2/converter-1.2.jar`
 
 ### Build 
   In order to build project, go to the 'converter' directory and type:
